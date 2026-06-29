@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        sh "corepack enable"
+        sh "npm install -g pnpm@10.21.0"
         sh "pnpm install --frozen-lockfile"
       }
     }
@@ -34,6 +34,21 @@ pipeline {
     stage("Docker Build") {
       steps {
         sh "docker build -t api-gateway:${env.BUILD_NUMBER} ."
+      }
+    }
+
+    stage("Deploy") {
+      steps {
+        sh "docker network create lifetrack-net || true"
+        sh "docker stop api-gateway || true"
+        sh "docker rm api-gateway || true"
+        sh """
+          docker run -d --name api-gateway \
+            --network lifetrack-net \
+            --restart unless-stopped \
+            -p 3000:3000 \
+            api-gateway:${env.BUILD_NUMBER}
+        """
       }
     }
   }
