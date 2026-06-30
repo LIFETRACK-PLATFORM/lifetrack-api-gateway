@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        sh "corepack enable"
+        sh "npm install -g pnpm@10.21.0"
         sh "pnpm install --frozen-lockfile"
       }
     }
@@ -41,9 +41,11 @@ pipeline {
   post {
     success {
       echo "Pipeline OK - api-gateway #${env.BUILD_NUMBER}"
+      githubNotify credentialsId: 'github-token-userpass', status: 'SUCCESS', context: 'jenkins-ci', description: 'CI passed'
     }
     failure {
       echo "Pipeline FAILED - api-gateway #${env.BUILD_NUMBER}"
+      githubNotify credentialsId: 'github-token-userpass', status: 'FAILURE', context: 'jenkins-ci', description: 'CI failed'
     }
   }
 }
