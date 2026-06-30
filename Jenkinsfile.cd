@@ -18,6 +18,7 @@ pipeline {
             --network lifetrack-net \
             --restart unless-stopped \
             -p 3000:3000 \
+            --env-file /opt/lifetrack/envs/api-gateway.env \
             api-gateway:${env.BUILD_NUMBER}
         """
       }

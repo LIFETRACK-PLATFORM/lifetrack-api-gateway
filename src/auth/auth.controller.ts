@@ -11,24 +11,28 @@ import { LoginUserDto } from './dto/login-user.dto';
 export class AuthController implements OnModuleInit {
   private authService: AuthServiceGrpc;
 
-  constructor(@Inject('AUTH_SERVICE') private readonly client: ClientGrpc) { }
+  constructor(@Inject('AUTH_SERVICE') private readonly client: ClientGrpc) {}
 
   onModuleInit() {
     this.authService = this.client.getService<AuthServiceGrpc>('AuthService');
   }
 
-  @Post("register")
+  @Post('register')
   registerUser(@Body() registerUserDto: RegisterUserDto) {
     const { name, ...rest } = registerUserDto;
     return this.authService.register({ ...rest, displayName: name }).pipe(
-      catchError(err => { throw new RpcException(parseGrpcError(err)) }),
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
     );
   }
 
-  @Post("login")
+  @Post('login')
   loginUser(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto).pipe(
-      catchError(err => { throw new RpcException(parseGrpcError(err)) }),
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
     );
   }
 }

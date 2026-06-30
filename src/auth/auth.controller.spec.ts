@@ -22,7 +22,10 @@ describe('AuthController', () => {
 
     controller = module.get<AuthController>(AuthController);
     controller.onModuleInit();
-    authService = mockClientGrpc.getService();
+    authService = mockClientGrpc.getService() as {
+      register: jest.Mock;
+      login: jest.Mock;
+    };
   });
 
   it('debería estar definido', () => {
@@ -34,7 +37,11 @@ describe('AuthController', () => {
     authService.register.mockReturnValue(of(response));
 
     controller
-      .registerUser({ name: 'Alice', email: 'alice@test.com', password: '1234' })
+      .registerUser({
+        name: 'Alice',
+        email: 'alice@test.com',
+        password: '1234',
+      })
       .subscribe((result) => {
         expect(authService.register).toHaveBeenCalledWith({
           email: 'alice@test.com',
@@ -68,7 +75,11 @@ describe('AuthController', () => {
     );
 
     controller
-      .registerUser({ name: 'Alice', email: 'alice@test.com', password: '1234' })
+      .registerUser({
+        name: 'Alice',
+        email: 'alice@test.com',
+        password: '1234',
+      })
       .subscribe({
         error: (err) => {
           expect(err).toBeInstanceOf(RpcException);

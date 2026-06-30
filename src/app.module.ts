@@ -5,4 +5,4 @@ import { NatsModule } from './transports/nats.module';
 @Module({
   imports: [AuthModule, NatsModule],
 })
-export class AppModule { }
+export class AppModule {}
