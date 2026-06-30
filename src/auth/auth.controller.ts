@@ -5,7 +5,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { catchError } from 'rxjs';
 import { AuthServiceGrpc } from './interfaces/auth-service.grpc.interface';
 import { parseGrpcError } from 'src/common/helpers/parse-grpc-error';
-import { LoginUserDto } from './dto/login-user.dto.ts';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('auth')
 export class AuthController implements OnModuleInit {
