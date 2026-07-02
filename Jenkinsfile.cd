@@ -34,7 +34,7 @@ pipeline {
               docker run -d --name api-gateway \
                 --network lifetrack-net \
                 --restart unless-stopped \
-                -p 3000:3000 \
+                -p 127.0.0.1:3000:3000 \
                 --env-file /home/ricardo/lifetrack-infra/envs/api-gateway.env \
                 ${IMAGE}:${env.BUILD_NUMBER}
             '
