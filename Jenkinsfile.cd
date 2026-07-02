@@ -1,26 +1,45 @@
 pipeline {
   agent any
 
+  environment {
+    IMAGE    = "ghcr.io/lifetrack-platform/api-gateway"
+    VPS      = "95.216.164.54"
+    VPS_USER = "ricardo"
+  }
+
   stages {
     stage("Docker Build") {
       steps {
-        sh "docker build -t api-gateway:${env.BUILD_NUMBER} ."
+        sh "docker build -t ${IMAGE}:${env.BUILD_NUMBER} ."
+      }
+    }
+
+    stage("Docker Push") {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'github-token-userpass', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
+          sh "echo ${GH_TOKEN} | docker login ghcr.io -u ${GH_USER} --password-stdin"
+          sh "docker push ${IMAGE}:${env.BUILD_NUMBER}"
+        }
       }
     }
 
     stage("Deploy") {
       steps {
-        sh "docker network create lifetrack-net || true"
-        sh "docker stop api-gateway || true"
-        sh "docker rm api-gateway || true"
-        sh """
-          docker run -d --name api-gateway \
-            --network lifetrack-net \
-            --restart unless-stopped \
-            -p 3000:3000 \
-            --env-file /home/ricardo/lifetrack-infra/envs/api-gateway.env \
-            api-gateway:${env.BUILD_NUMBER}
-        """
+        sshagent(['vps-ssh']) {
+          sh """
+            ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS} '
+              docker stop api-gateway || true
+              docker rm api-gateway || true
+              docker pull ${IMAGE}:${env.BUILD_NUMBER}
+              docker run -d --name api-gateway \
+                --network lifetrack-net \
+                --restart unless-stopped \
+                -p 3000:3000 \
+                --env-file /home/ricardo/lifetrack-infra/envs/api-gateway.env \
+                ${IMAGE}:${env.BUILD_NUMBER}
+            '
+          """
+        }
       }
     }
   }
