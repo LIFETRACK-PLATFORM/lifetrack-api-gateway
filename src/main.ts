@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { envs } from './config/envs';
 import { Logger, ValidationPipe } from '@nestjs/common';
@@ -7,6 +8,13 @@ import { RpcCustomExceptionFilter } from './common/exceptions/rpc-custom-excepti
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Main');
+
+  app.enableCors({
+    origin: envs.corsOrigin,
+    credentials: true,
+  });
+
+  app.use(cookieParser());
 
   app.useGlobalPipes(
     new ValidationPipe({
