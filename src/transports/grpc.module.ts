@@ -13,6 +13,17 @@ import { envs } from 'src/config/envs';
           package: 'lifetrack.auth',
           protoPath: join(process.cwd(), 'src/proto/auth.proto'),
           url: envs.authGrpcUrl,
+          loader: { arrays: true, defaults: true },
+        },
+      },
+      {
+        name: 'REHAB_SERVICE',
+        transport: Transport.GRPC,
+        options: {
+          package: 'lifetrack.rehab',
+          protoPath: join(process.cwd(), 'src/proto/rehab.proto'),
+          url: envs.rehabGrpcUrl,
+          loader: { arrays: true, defaults: true },
         },
       },
     ]),

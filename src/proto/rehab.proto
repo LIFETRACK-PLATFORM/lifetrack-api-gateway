@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package lifetrack.rehab;
+
+service RehabService {
+  rpc CreateRecoveryPlan (CreateRecoveryPlanRequest) returns (RecoveryPlanResponse);
+  rpc ListRecoveryPlansByUser (ListRecoveryPlansByUserRequest) returns (ListRecoveryPlansByUserResponse);
+  rpc AddExercise (AddExerciseRequest) returns (ExerciseResponse);
+  rpc LogExercise (LogExerciseRequest) returns (ExerciseLogResponse);
+  rpc AddAppointment (AddAppointmentRequest) returns (AppointmentResponse);
+  rpc AddMeasurement (AddMeasurementRequest) returns (MeasurementResponse);
+  rpc AddProgressPhoto (AddProgressPhotoRequest) returns (ProgressPhotoResponse);
+  rpc ListRecoveryProgress (ListRecoveryProgressRequest) returns (RecoveryProgressResponse);
+}
+
+message CreateRecoveryPlanRequest {
+  string userId = 1;
+  string bodyPart = 2;
+  string injuryType = 3;
+  string surgeryDate = 4;
+}
+
+message ListRecoveryPlansByUserRequest {}
+
+message RecoveryPlanSummary {
+  string recoveryPlanId = 1;
+  string bodyPart = 2;
+  string injuryType = 3;
+  string surgeryDate = 4;
+  string status = 5;
+}
+
+message ListRecoveryPlansByUserResponse {
+  repeated RecoveryPlanSummary plans = 1;
+}
+
+message RecoveryPlanResponse {
+  string recoveryPlanId = 1;
+  string userId = 2;
+  string bodyPart = 3;
+  string injuryType = 4;
+  string surgeryDate = 5;
+  string status = 6;
+}
+
+message AddExerciseRequest {
+  string recoveryPlanId = 1;
+  string name = 2;
+  int32 targetSets = 3;
+  int32 targetReps = 4;
+  string referenceMediaUrl = 5;
+  int32 phase = 6;
+}
+
+message ExerciseResponse {
+  string exerciseId = 1;
+  string recoveryPlanId = 2;
+  string name = 3;
+  int32 targetSets = 4;
+  int32 targetReps = 5;
+  int32 phase = 6;
+}
+
+message LogExerciseRequest {
+  string exerciseId = 1;
+  int32 setsDone = 2;
+  int32 repsDone = 3;
+  string date = 4;
+}
+
+message ExerciseLogResponse {
+  string exerciseLogId = 1;
+  string exerciseId = 2;
+  int32 setsDone = 3;
+  int32 repsDone = 4;
+  string date = 5;
+}
+
+message AddAppointmentRequest {
+  string recoveryPlanId = 1;
+  string date = 2;
+  string provider = 3;
+  string notes = 4;
+}
+
+message AppointmentResponse {
+  string appointmentId = 1;
+  string recoveryPlanId = 2;
+  string date = 3;
+  string provider = 4;
+  string notes = 5;
+}
+
+message AddMeasurementRequest {
+  string recoveryPlanId = 1;
+  string type = 2;
+  double value = 3;
+  string unit = 4;
+  string date = 5;
+}
+
+message MeasurementResponse {
+  string measurementId = 1;
+  string recoveryPlanId = 2;
+  string type = 3;
+  double value = 4;
+  string unit = 5;
+  string date = 6;
+}
+
+message AddProgressPhotoRequest {
+  string recoveryPlanId = 1;
+  string photoUrl = 2;
+  string date = 3;
+}
+
+message ProgressPhotoResponse {
+  string progressPhotoId = 1;
+  string recoveryPlanId = 2;
+  string photoUrl = 3;
+  string date = 4;
+}
+
+message ListRecoveryProgressRequest {
+  string recoveryPlanId = 1;
+}
+
+message ExerciseLogEntry {
+  string exerciseLogId = 1;
+  int32 setsDone = 2;
+  int32 repsDone = 3;
+  string date = 4;
+}
+
+message ExerciseProgress {
+  string exerciseId = 1;
+  string name = 2;
+  int32 targetSets = 3;
+  int32 targetReps = 4;
+  int32 phase = 5;
+  repeated ExerciseLogEntry logs = 6;
+}
+
+message RecoveryProgressResponse {
+  string recoveryPlanId = 1;
+  string bodyPart = 2;
+  string injuryType = 3;
+  string surgeryDate = 4;
+  string status = 5;
+  repeated ExerciseProgress exercises = 6;
+  repeated AppointmentResponse appointments = 7;
+  repeated MeasurementResponse measurements = 8;
+  repeated ProgressPhotoResponse progressPhotos = 9;
+}
