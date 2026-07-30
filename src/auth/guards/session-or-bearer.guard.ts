@@ -33,8 +33,12 @@ export class SessionOrBearerGuard implements CanActivate, OnModuleInit {
 
     const bearer = this.extractBearerToken(req);
     if (bearer) {
-      req.user = await this.validateAccessToken(bearer);
-      return true;
+      try {
+        req.user = await this.validateAccessToken(bearer);
+        return true;
+      } catch {
+        throw new UnauthorizedException('Sesión requerida');
+      }
     }
 
     const accessCookie = req.cookies?.[ACCESS_TOKEN_COOKIE] as string | undefined;
@@ -51,8 +55,12 @@ export class SessionOrBearerGuard implements CanActivate, OnModuleInit {
       | string
       | undefined;
     if (refreshCookie) {
-      req.user = await this.resolveUserFromRefresh(refreshCookie);
-      return true;
+      try {
+        req.user = await this.resolveUserFromRefresh(refreshCookie);
+        return true;
+      } catch {
+        // refresh también inválido/expirado: no hay nada más que intentar
+      }
     }
 
     throw new UnauthorizedException('Sesión requerida');
