@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import { envs } from './config/envs';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { RpcCustomExceptionFilter } from './common/exceptions/rpc-custom-exception.filter';
+import { AllExceptionsFilter } from './common/exceptions/all-exceptions.filter';
 import { spanishValidationExceptionFactory } from './common/helpers/spanish-validation-exception-factory';
 
 async function bootstrap() {
@@ -32,7 +33,7 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalFilters(new RpcCustomExceptionFilter());
+  app.useGlobalFilters(new RpcCustomExceptionFilter(), new AllExceptionsFilter());
 
   await app.listen(envs.port);
   logger.log(`Auth Service running on port ${envs.port}`);

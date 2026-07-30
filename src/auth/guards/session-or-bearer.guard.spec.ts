@@ -100,4 +100,31 @@ describe('SessionOrBearerGuard', () => {
 
     await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
   });
+
+  it('rechaza con 401 (no 500) si tanto el access como el refresh son inválidos', async () => {
+    authService.validateToken.mockReturnValue(
+      throwError(() => ({ code: 16, details: 'expired' })),
+    );
+    authService.me.mockReturnValue(
+      throwError(() => ({ code: 16, details: 'invalid refresh' })),
+    );
+    const { context } = createContext(
+      {},
+      {
+        [ACCESS_TOKEN_COOKIE]: 'expired-access',
+        [REFRESH_TOKEN_COOKIE]: 'expired-refresh',
+      },
+    );
+
+    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+  });
+
+  it('rechaza con 401 (no 500) si el Bearer token es inválido', async () => {
+    authService.validateToken.mockReturnValue(
+      throwError(() => ({ code: 16, details: 'invalid' })),
+    );
+    const { context } = createContext({ authorization: 'Bearer bad-token' });
+
+    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+  });
 });
