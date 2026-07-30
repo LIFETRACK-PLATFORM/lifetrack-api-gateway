@@ -38,7 +38,12 @@ describe('Rate limiting en /auth/login (e2e)', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
+        ThrottlerModule.forRoot({
+          throttlers: [
+            { name: 'default', ttl: 60_000, limit: 100 },
+            { name: 'long', ttl: 15 * 60_000, limit: 1000 },
+          ],
+        }),
       ],
       controllers: [AuthController],
       providers: [
@@ -58,7 +63,9 @@ describe('Rate limiting en /auth/login (e2e)', () => {
   it('rechaza con 429 tras exceder el límite estricto de /auth/login para una misma IP', async () => {
     const credentials = { email: 'alice@test.com', password: 'x' };
 
-    for (let i = 0; i < 5; i++) {
+    // El límite de abuso sostenido (20 cada 15 min) es más estricto que la
+    // ráfaga corta (25 por minuto), así que es el primero en dispararse aquí.
+    for (let i = 0; i < 20; i++) {
       const res = await request(app.getHttpServer())
         .post('/auth/login')
         .send(credentials);
@@ -79,7 +86,12 @@ describe('Rate limiting en /auth/register (e2e)', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
+        ThrottlerModule.forRoot({
+          throttlers: [
+            { name: 'default', ttl: 60_000, limit: 100 },
+            { name: 'long', ttl: 15 * 60_000, limit: 1000 },
+          ],
+        }),
       ],
       controllers: [AuthController],
       providers: [
@@ -103,7 +115,7 @@ describe('Rate limiting en /auth/register (e2e)', () => {
       name: 'Alice',
     };
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 20; i++) {
       const res = await request(app.getHttpServer())
         .post('/auth/register')
         .send(payload);
@@ -124,7 +136,12 @@ describe('POST /auth/resend-verification (e2e)', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
+        ThrottlerModule.forRoot({
+          throttlers: [
+            { name: 'default', ttl: 60_000, limit: 100 },
+            { name: 'long', ttl: 15 * 60_000, limit: 1000 },
+          ],
+        }),
       ],
       controllers: [AuthController],
       providers: [
@@ -144,7 +161,7 @@ describe('POST /auth/resend-verification (e2e)', () => {
   it('reenvía la verificación y rechaza con 429 tras exceder el límite por IP', async () => {
     const payload = { email: 'alice@test.com' };
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 20; i++) {
       const res = await request(app.getHttpServer())
         .post('/auth/resend-verification')
         .send(payload);
