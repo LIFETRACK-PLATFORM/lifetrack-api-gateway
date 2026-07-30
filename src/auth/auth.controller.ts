@@ -26,6 +26,7 @@ import { LogoutUserDto } from './dto/logout-user.dto';
 import { ForgotPasswordUserDto } from './dto/forgot-password-user.dto';
 import { ResetPasswordUserDto } from './dto/reset-password-user.dto';
 import { ConfirmEmailUserDto } from './dto/confirm-email-user.dto';
+import { ResendVerificationUserDto } from './dto/resend-verification-user.dto';
 import {
   ACCESS_TOKEN_COOKIE,
   REFRESH_TOKEN_COOKIE,
@@ -47,6 +48,7 @@ export class AuthController implements OnModuleInit {
     this.authService = this.client.getService<AuthServiceGrpc>('AuthService');
   }
 
+  @Throttle(AUTH_THROTTLE)
   @Post('register')
   registerUser(@Body() registerUserDto: RegisterUserDto) {
     const { name, ...rest } = registerUserDto;
@@ -158,6 +160,20 @@ export class AuthController implements OnModuleInit {
         throw new RpcException(parseGrpcError(err));
       }),
     );
+  }
+
+  @Throttle(AUTH_THROTTLE)
+  @Post('resend-verification')
+  resendVerification(
+    @Body() resendVerificationUserDto: ResendVerificationUserDto,
+  ) {
+    return this.authService
+      .resendVerification(resendVerificationUserDto)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
   }
 
   private extractRefreshToken(req: Request, bodyToken?: string): string {
