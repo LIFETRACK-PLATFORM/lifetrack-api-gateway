@@ -14,8 +14,8 @@ const envsSchema = joi
     PORT: joi.number().required(),
     NATS_SERVERS: joi.array().items(joi.string()).required(),
     AUTH_GRPC_URL: joi.string().required(),
-    REHAB_GRPC_URL: joi.string().default('localhost:50053'),
-    CORS_ORIGIN: joi.string().default('http://localhost:3000'),
+    REHAB_GRPC_URL: joi.string().required(),
+    CORS_ORIGIN: joi.string().required(),
   })
   .unknown(true);
 
