@@ -24,8 +24,8 @@ export function parseGrpcError(err: GrpcError): {
   if (err && typeof err.code === 'number') {
     return {
       status: GRPC_TO_HTTP_STATUS[err.code] ?? 500,
-      message: err.details ?? 'Internal server error',
+      message: err.details ?? 'Error interno del servidor',
     };
   }
-  return { status: 500, message: 'Internal server error' };
+  return { status: 500, message: 'Error interno del servidor' };
 }

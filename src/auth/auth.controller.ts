@@ -34,9 +34,15 @@ import {
   sessionCookieOptions,
 } from './constants/session-cookies';
 
-// Límite estricto por IP para endpoints públicos sensibles a fuerza bruta
-// (login, forgot-password, reset-password), más restrictivo que el default global.
-const AUTH_THROTTLE = { default: { limit: 5, ttl: 60_000 } };
+// Límite por IP para endpoints públicos sensibles a fuerza bruta (login,
+// register, forgot-password, reset-password, etc.). Pensado para bloquear solo
+// volumen anormal, no el uso normal de un usuario real:
+// - ráfaga corta: hasta 25 intentos por minuto.
+// - abuso sostenido: hasta 20 intentos cada 15 minutos.
+const AUTH_THROTTLE = {
+  default: { limit: 25, ttl: 60_000 },
+  long: { limit: 20, ttl: 15 * 60_000 },
+};
 
 @Controller('auth')
 export class AuthController implements OnModuleInit {
