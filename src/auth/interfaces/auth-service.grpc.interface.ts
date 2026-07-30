@@ -87,6 +87,14 @@ export interface ConfirmEmailResponse {
   success: boolean;
 }
 
+export interface ResendVerificationRequest {
+  email: string;
+}
+
+export interface ResendVerificationResponse {
+  success: boolean;
+}
+
 export interface AuthServiceGrpc {
   register(data: RegisterRequest): Observable<RegisterResponse>;
   login(data: LoginRequest): Observable<LoginResponse>;
@@ -99,4 +107,7 @@ export interface AuthServiceGrpc {
   ): Observable<ForgotPasswordResponse>;
   resetPassword(data: ResetPasswordRequest): Observable<ResetPasswordResponse>;
   confirmEmail(data: ConfirmEmailRequest): Observable<ConfirmEmailResponse>;
+  resendVerification(
+    data: ResendVerificationRequest,
+  ): Observable<ResendVerificationResponse>;
 }
