@@ -39,6 +39,23 @@ export interface RecoveryProgressResponse {
   progressPhotos: unknown[];
 }
 
+export interface AddExerciseRequest {
+  name: string;
+  targetSets: number;
+  targetReps: number;
+  phase: number;
+  referenceMediaUrl?: string;
+}
+
+export interface ExerciseResponse {
+  exerciseId: string;
+  recoveryPlanId: string;
+  name: string;
+  targetSets: number;
+  targetReps: number;
+  phase: number;
+}
+
 export interface LogExerciseRequest {
   setsDone: number;
   repsDone: number;
@@ -70,4 +87,8 @@ export interface RehabServiceGrpc {
     data: LogExerciseRequest & { exerciseId: string },
     metadata?: unknown,
   ): Observable<ExerciseLogResponse>;
+  addExercise(
+    data: AddExerciseRequest & { recoveryPlanId: string },
+    metadata?: unknown,
+  ): Observable<ExerciseResponse>;
 }

@@ -1,4 +1,11 @@
-import { IsDateString, IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
+import {
+  IsDateString,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class CreateRecoveryPlanBodyDto {
   @IsString()
@@ -11,6 +18,28 @@ export class CreateRecoveryPlanBodyDto {
 
   @IsDateString()
   surgeryDate: string;
+}
+
+export class AddExerciseBodyDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsInt()
+  @Min(1)
+  targetSets: number;
+
+  @IsInt()
+  @Min(1)
+  targetReps: number;
+
+  @IsInt()
+  @Min(1)
+  phase: number;
+
+  @IsOptional()
+  @IsString()
+  referenceMediaUrl?: string;
 }
 
 export class LogExerciseBodyDto {
