@@ -17,6 +17,7 @@ import { SessionOrBearerGuard } from 'src/auth/guards/session-or-bearer.guard';
 import type { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 import { parseGrpcError } from 'src/common/helpers/parse-grpc-error';
 import {
+  AddExerciseBodyDto,
   CreateRecoveryPlanBodyDto,
   LogExerciseBodyDto,
 } from './dto/rehab.dto';
@@ -67,6 +68,22 @@ export class RehabController implements OnModuleInit {
         throw new RpcException(parseGrpcError(err));
       }),
     );
+  }
+
+  @Post('plans/:id/exercises')
+  addExercise(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() body: AddExerciseBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .addExercise({ recoveryPlanId: id, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
   }
 
   @Post('exercises/:id/logs')
