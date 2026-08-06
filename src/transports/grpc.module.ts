@@ -36,6 +36,16 @@ import { envs } from 'src/config/envs';
           loader: { arrays: true, defaults: true },
         },
       },
+      {
+        name: 'FINANCE_SERVICE',
+        transport: Transport.GRPC,
+        options: {
+          package: 'lifetrack.finance',
+          protoPath: join(process.cwd(), 'src/proto/finance.proto'),
+          url: envs.financeGrpcUrl,
+          loader: { arrays: true, defaults: true },
+        },
+      },
     ]),
   ],
   exports: [ClientsModule],
