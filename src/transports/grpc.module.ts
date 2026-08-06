@@ -17,6 +17,16 @@ import { envs } from 'src/config/envs';
         },
       },
       {
+        name: 'USER_SERVICE',
+        transport: Transport.GRPC,
+        options: {
+          package: 'lifetrack.user',
+          protoPath: join(process.cwd(), 'src/proto/user.proto'),
+          url: envs.userGrpcUrl,
+          loader: { arrays: true, defaults: true },
+        },
+      },
+      {
         name: 'REHAB_SERVICE',
         transport: Transport.GRPC,
         options: {

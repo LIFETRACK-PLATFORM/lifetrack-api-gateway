@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { RehabModule } from './rehab/rehab.module';
+import { UsersModule } from './users/users.module';
 import { NatsModule } from './transports/nats.module';
 
 @Module({
@@ -27,6 +28,7 @@ import { NatsModule } from './transports/nats.module';
         'Demasiadas solicitudes. Por favor, inténtalo de nuevo más tarde.',
     }),
     AuthModule,
+    UsersModule,
     RehabModule,
     NatsModule,
   ],
