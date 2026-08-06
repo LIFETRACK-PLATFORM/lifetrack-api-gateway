@@ -5,6 +5,7 @@ interface EnvVars {
   PORT: number;
   NATS_SERVERS: string[];
   AUTH_GRPC_URL: string;
+  USER_GRPC_URL: string;
   REHAB_GRPC_URL: string;
   CORS_ORIGIN: string;
 }
@@ -14,6 +15,7 @@ const envsSchema = joi
     PORT: joi.number().required(),
     NATS_SERVERS: joi.array().items(joi.string()).required(),
     AUTH_GRPC_URL: joi.string().required(),
+    USER_GRPC_URL: joi.string().required(),
     REHAB_GRPC_URL: joi.string().required(),
     CORS_ORIGIN: joi.string().required(),
   })
@@ -32,6 +34,7 @@ export const envs = {
   port: value.PORT,
   natsServers: value.NATS_SERVERS,
   authGrpcUrl: value.AUTH_GRPC_URL,
+  userGrpcUrl: value.USER_GRPC_URL,
   rehabGrpcUrl: value.REHAB_GRPC_URL,
   corsOrigin: value.CORS_ORIGIN,
 };

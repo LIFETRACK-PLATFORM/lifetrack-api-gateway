@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package lifetrack.user;
+
+service UserService {
+  rpc GetMyProfile (GetMyProfileRequest) returns (UserProfileResponse);
+  rpc UpdateMyProfile (UpdateMyProfileRequest) returns (UserProfileResponse);
+}
+
+message GetMyProfileRequest {}
+
+message UpdateMyProfileRequest {
+  string displayName = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string avatarUrl = 4;
+  string phone = 5;
+  string timezone = 6;
+  string language = 7;
+}
+
+message UserProfileResponse {
+  string id = 1;
+  string authUserId = 2;
+  string email = 3;
+  string displayName = 4;
+  string firstName = 5;
+  string lastName = 6;
+  string avatarUrl = 7;
+  string phone = 8;
+  string timezone = 9;
+  string language = 10;
+  string status = 11;
+}
