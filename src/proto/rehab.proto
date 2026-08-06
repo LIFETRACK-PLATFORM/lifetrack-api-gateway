@@ -6,6 +6,7 @@ service RehabService {
   rpc CreateRecoveryPlan (CreateRecoveryPlanRequest) returns (RecoveryPlanResponse);
   rpc ListRecoveryPlansByUser (ListRecoveryPlansByUserRequest) returns (ListRecoveryPlansByUserResponse);
   rpc AddExercise (AddExerciseRequest) returns (ExerciseResponse);
+  rpc DeleteExercise (DeleteExerciseRequest) returns (DeleteExerciseResponse);
   rpc LogExercise (LogExerciseRequest) returns (ExerciseLogResponse);
   rpc AddAppointment (AddAppointmentRequest) returns (AddAppointmentResponse);
   rpc AddMeasurement (AddMeasurementRequest) returns (MeasurementResponse);
@@ -66,6 +67,16 @@ message ExerciseResponse {
   int32 targetReps = 5;
   int32 phase = 6;
   repeated int32 daysOfWeek = 7;
+}
+
+message DeleteExerciseRequest {
+  string exerciseId = 1;
+}
+
+message DeleteExerciseResponse {
+  string exerciseId = 1;
+  string recoveryPlanId = 2;
+  bool deleted = 3;
 }
 
 message LogExerciseRequest {
