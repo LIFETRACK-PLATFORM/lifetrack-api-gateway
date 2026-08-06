@@ -6,6 +6,7 @@ import {
   OnModuleInit,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -17,9 +18,12 @@ import { SessionOrBearerGuard } from 'src/auth/guards/session-or-bearer.guard';
 import type { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 import { parseGrpcError } from 'src/common/helpers/parse-grpc-error';
 import {
+  AddAppointmentBodyDto,
   AddExerciseBodyDto,
+  AddPainLogBodyDto,
   CreateRecoveryPlanBodyDto,
   LogExerciseBodyDto,
+  MarkExerciseCompletionBodyDto,
 } from './dto/rehab.dto';
 import { buildUserMetadata } from './helpers/build-user-metadata';
 import { RehabServiceGrpc } from './interfaces/rehab-service.grpc.interface';
@@ -60,6 +64,51 @@ export class RehabController implements OnModuleInit {
       );
   }
 
+  @Get('plans/:id/today')
+  getTodayExercises(@Req() req: RequestWithUser, @Param('id') id: string) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .getTodayExercises({ recoveryPlanId: id }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Get('plans/:id/weekly-summary')
+  getWeeklySummary(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Query('referenceDate') referenceDate?: string,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .getWeeklySummary({ recoveryPlanId: id, referenceDate }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Get('plans/:id/pain-logs')
+  listPainLogs(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Query('from') from: string,
+    @Query('to') to: string,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .listPainLogs({ recoveryPlanId: id, from, to }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
   @Post('plans')
   createPlan(@Req() req: RequestWithUser, @Body() body: CreateRecoveryPlanBodyDto) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -86,6 +135,38 @@ export class RehabController implements OnModuleInit {
       );
   }
 
+  @Post('plans/:id/appointments')
+  addAppointment(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() body: AddAppointmentBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .addAppointment({ recoveryPlanId: id, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Post('plans/:id/pain-logs')
+  addPainLog(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() body: AddPainLogBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .addPainLog({ recoveryPlanId: id, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
   @Post('exercises/:id/logs')
   logExercise(
     @Req() req: RequestWithUser,
@@ -95,6 +176,22 @@ export class RehabController implements OnModuleInit {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
       .logExercise({ exerciseId, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Post('exercises/:id/completions')
+  markExerciseCompletion(
+    @Req() req: RequestWithUser,
+    @Param('id') exerciseId: string,
+    @Body() body: MarkExerciseCompletionBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .markExerciseCompletion({ exerciseId, ...body }, metadata)
       .pipe(
         catchError((err) => {
           throw new RpcException(parseGrpcError(err));

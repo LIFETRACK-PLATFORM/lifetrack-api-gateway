@@ -7,10 +7,15 @@ service RehabService {
   rpc ListRecoveryPlansByUser (ListRecoveryPlansByUserRequest) returns (ListRecoveryPlansByUserResponse);
   rpc AddExercise (AddExerciseRequest) returns (ExerciseResponse);
   rpc LogExercise (LogExerciseRequest) returns (ExerciseLogResponse);
-  rpc AddAppointment (AddAppointmentRequest) returns (AppointmentResponse);
+  rpc AddAppointment (AddAppointmentRequest) returns (AddAppointmentResponse);
   rpc AddMeasurement (AddMeasurementRequest) returns (MeasurementResponse);
   rpc AddProgressPhoto (AddProgressPhotoRequest) returns (ProgressPhotoResponse);
   rpc ListRecoveryProgress (ListRecoveryProgressRequest) returns (RecoveryProgressResponse);
+  rpc MarkExerciseCompletion (MarkExerciseCompletionRequest) returns (MarkExerciseCompletionResponse);
+  rpc GetTodayExercises (GetTodayExercisesRequest) returns (GetTodayExercisesResponse);
+  rpc GetWeeklySummary (GetWeeklySummaryRequest) returns (GetWeeklySummaryResponse);
+  rpc AddPainLog (AddPainLogRequest) returns (PainLogResponse);
+  rpc ListPainLogs (ListPainLogsRequest) returns (ListPainLogsResponse);
 }
 
 message CreateRecoveryPlanRequest {
@@ -50,6 +55,7 @@ message AddExerciseRequest {
   int32 targetReps = 4;
   string referenceMediaUrl = 5;
   int32 phase = 6;
+  repeated int32 daysOfWeek = 7;
 }
 
 message ExerciseResponse {
@@ -59,6 +65,7 @@ message ExerciseResponse {
   int32 targetSets = 4;
   int32 targetReps = 5;
   int32 phase = 6;
+  repeated int32 daysOfWeek = 7;
 }
 
 message LogExerciseRequest {
@@ -81,6 +88,8 @@ message AddAppointmentRequest {
   string date = 2;
   string provider = 3;
   string notes = 4;
+  string type = 5;
+  int32 repeatWeeks = 6;
 }
 
 message AppointmentResponse {
@@ -89,6 +98,11 @@ message AppointmentResponse {
   string date = 3;
   string provider = 4;
   string notes = 5;
+  string type = 6;
+}
+
+message AddAppointmentResponse {
+  repeated AppointmentResponse appointments = 1;
 }
 
 message AddMeasurementRequest {
@@ -132,6 +146,11 @@ message ExerciseLogEntry {
   string date = 4;
 }
 
+message ExerciseCompletionEntry {
+  string exerciseCompletionId = 1;
+  string date = 2;
+}
+
 message ExerciseProgress {
   string exerciseId = 1;
   string name = 2;
@@ -139,6 +158,16 @@ message ExerciseProgress {
   int32 targetReps = 4;
   int32 phase = 5;
   repeated ExerciseLogEntry logs = 6;
+  repeated int32 daysOfWeek = 7;
+  repeated ExerciseCompletionEntry completions = 8;
+}
+
+message PainLogResponse {
+  string painLogId = 1;
+  string recoveryPlanId = 2;
+  string date = 3;
+  int32 level = 4;
+  string note = 5;
 }
 
 message RecoveryProgressResponse {
@@ -151,4 +180,81 @@ message RecoveryProgressResponse {
   repeated AppointmentResponse appointments = 7;
   repeated MeasurementResponse measurements = 8;
   repeated ProgressPhotoResponse progressPhotos = 9;
+  repeated PainLogResponse painLogs = 10;
+}
+
+message MarkExerciseCompletionRequest {
+  string exerciseId = 1;
+  string date = 2;
+  bool completed = 3;
+}
+
+message MarkExerciseCompletionResponse {
+  string exerciseId = 1;
+  string date = 2;
+  bool completed = 3;
+}
+
+message GetTodayExercisesRequest {
+  string recoveryPlanId = 1;
+}
+
+message TodayExerciseEntry {
+  string exerciseId = 1;
+  string name = 2;
+  int32 targetSets = 3;
+  int32 targetReps = 4;
+  int32 phase = 5;
+  bool scheduledToday = 6;
+  bool completedToday = 7;
+  bool urgent = 8;
+}
+
+message GetTodayExercisesResponse {
+  repeated TodayExerciseEntry exercises = 1;
+}
+
+message GetWeeklySummaryRequest {
+  string recoveryPlanId = 1;
+  string referenceDate = 2;
+}
+
+message WeeklySummaryDay {
+  string date = 1;
+  int32 due = 2;
+  int32 completed = 3;
+  bool compliant = 4;
+  bool isFuture = 5;
+}
+
+message AppointmentsByType {
+  int32 therapy = 1;
+  int32 medical = 2;
+}
+
+message GetWeeklySummaryResponse {
+  string recoveryPlanId = 1;
+  string weekStart = 2;
+  string weekEnd = 3;
+  repeated WeeklySummaryDay days = 4;
+  int32 weeklyCompliancePercent = 5;
+  AppointmentsByType appointmentsByType = 6;
+  int32 streakDays = 7;
+}
+
+message AddPainLogRequest {
+  string recoveryPlanId = 1;
+  string date = 2;
+  int32 level = 3;
+  string note = 4;
+}
+
+message ListPainLogsRequest {
+  string recoveryPlanId = 1;
+  string from = 2;
+  string to = 3;
+}
+
+message ListPainLogsResponse {
+  repeated PainLogResponse painLogs = 1;
 }
