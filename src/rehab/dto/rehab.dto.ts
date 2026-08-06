@@ -1,9 +1,14 @@
 import {
+  ArrayUnique,
+  IsArray,
+  IsBoolean,
   IsDateString,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
+  Max,
   Min,
 } from 'class-validator';
 
@@ -40,6 +45,14 @@ export class AddExerciseBodyDto {
   @IsOptional()
   @IsString()
   referenceMediaUrl?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  @IsInt({ each: true })
+  @Min(0, { each: true })
+  @Max(6, { each: true })
+  daysOfWeek?: number[];
 }
 
 export class LogExerciseBodyDto {
@@ -53,4 +66,48 @@ export class LogExerciseBodyDto {
 
   @IsDateString()
   date: string;
+}
+
+export class AddAppointmentBodyDto {
+  @IsDateString()
+  date: string;
+
+  @IsString()
+  @IsNotEmpty()
+  provider: string;
+
+  @IsIn(['THERAPY', 'MEDICAL'])
+  type: 'THERAPY' | 'MEDICAL';
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(12)
+  repeatWeeks?: number;
+}
+
+export class MarkExerciseCompletionBodyDto {
+  @IsDateString()
+  date: string;
+
+  @IsBoolean()
+  completed: boolean;
+}
+
+export class AddPainLogBodyDto {
+  @IsDateString()
+  date: string;
+
+  @IsInt()
+  @Min(0)
+  @Max(10)
+  level: number;
+
+  @IsOptional()
+  @IsString()
+  note?: string;
 }
