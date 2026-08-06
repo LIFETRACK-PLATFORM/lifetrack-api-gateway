@@ -173,13 +173,11 @@ export class AuthController implements OnModuleInit {
   resendVerification(
     @Body() resendVerificationUserDto: ResendVerificationUserDto,
   ) {
-    return this.authService
-      .resendVerification(resendVerificationUserDto)
-      .pipe(
-        catchError((err) => {
-          throw new RpcException(parseGrpcError(err));
-        }),
-      );
+    return this.authService.resendVerification(resendVerificationUserDto).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
   }
 
   private extractRefreshToken(req: Request, bodyToken?: string): string {

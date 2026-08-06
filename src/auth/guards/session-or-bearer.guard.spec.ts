@@ -53,7 +53,9 @@ describe('SessionOrBearerGuard', () => {
     authService.validateToken.mockReturnValue(
       of({ sub: 'u1', email: 'a@test.com', roles: ['USER'] }),
     );
-    const { context, req } = createContext({ authorization: 'Bearer mobile-token' });
+    const { context, req } = createContext({
+      authorization: 'Bearer mobile-token',
+    });
 
     await expect(guard.canActivate(context)).resolves.toBe(true);
     expect(req.user?.userId).toBe('u1');
@@ -63,7 +65,10 @@ describe('SessionOrBearerGuard', () => {
     authService.validateToken.mockReturnValue(
       of({ sub: 'u2', email: 'b@test.com', roles: ['USER'] }),
     );
-    const { context } = createContext({}, { [ACCESS_TOKEN_COOKIE]: 'web-access' });
+    const { context } = createContext(
+      {},
+      { [ACCESS_TOKEN_COOKIE]: 'web-access' },
+    );
 
     await expect(guard.canActivate(context)).resolves.toBe(true);
     expect(authService.validateToken).toHaveBeenCalledWith({
@@ -92,13 +97,17 @@ describe('SessionOrBearerGuard', () => {
     );
 
     await expect(guard.canActivate(context)).resolves.toBe(true);
-    expect(authService.me).toHaveBeenCalledWith({ refreshToken: 'valid-refresh' });
+    expect(authService.me).toHaveBeenCalledWith({
+      refreshToken: 'valid-refresh',
+    });
   });
 
   it('rechaza petición sin credenciales', async () => {
     const { context } = createContext();
 
-    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
 
   it('rechaza con 401 (no 500) si tanto el access como el refresh son inválidos', async () => {
@@ -116,7 +125,9 @@ describe('SessionOrBearerGuard', () => {
       },
     );
 
-    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
 
   it('rechaza con 401 (no 500) si el Bearer token es inválido', async () => {
@@ -125,6 +136,8 @@ describe('SessionOrBearerGuard', () => {
     );
     const { context } = createContext({ authorization: 'Bearer bad-token' });
 
-    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
 });

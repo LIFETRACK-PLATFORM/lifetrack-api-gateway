@@ -214,7 +214,11 @@ export interface RehabServiceGrpc {
   deleteExercise(
     data: { exerciseId: string },
     metadata?: unknown,
-  ): Observable<{ exerciseId: string; recoveryPlanId: string; deleted: boolean }>;
+  ): Observable<{
+    exerciseId: string;
+    recoveryPlanId: string;
+    deleted: boolean;
+  }>;
   addAppointment(
     data: AddAppointmentRequest & { recoveryPlanId: string },
     metadata?: unknown,
