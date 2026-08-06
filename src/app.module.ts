@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { RehabModule } from './rehab/rehab.module';
+import { FinanceModule } from './finance/finance.module';
 import { UsersModule } from './users/users.module';
 import { NatsModule } from './transports/nats.module';
 
@@ -30,6 +31,7 @@ import { NatsModule } from './transports/nats.module';
     AuthModule,
     UsersModule,
     RehabModule,
+    FinanceModule,
     NatsModule,
   ],
   providers: [
