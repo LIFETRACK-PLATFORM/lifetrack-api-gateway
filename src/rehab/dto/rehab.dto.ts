@@ -6,6 +6,7 @@ import {
   IsIn,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   Max,
@@ -110,4 +111,28 @@ export class AddPainLogBodyDto {
   @IsOptional()
   @IsString()
   note?: string;
+}
+
+export class AddMeasurementBodyDto {
+  @IsIn([
+    'FLEXION_DEGREES',
+    'EXTENSION_DEGREES',
+    'QUAD_CIRCUMFERENCE_CM',
+    'WEIGHT_KG',
+  ])
+  type:
+    | 'FLEXION_DEGREES'
+    | 'EXTENSION_DEGREES'
+    | 'QUAD_CIRCUMFERENCE_CM'
+    | 'WEIGHT_KG';
+
+  @IsNumber()
+  value: number;
+
+  @IsString()
+  @IsNotEmpty()
+  unit: string;
+
+  @IsDateString()
+  date: string;
 }

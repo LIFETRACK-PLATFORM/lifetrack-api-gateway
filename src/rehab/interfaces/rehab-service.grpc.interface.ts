@@ -155,6 +155,23 @@ export interface AddPainLogRequest {
   note?: string;
 }
 
+export interface AddMeasurementRequest {
+  recoveryPlanId: string;
+  type: string;
+  value: number;
+  unit: string;
+  date: string;
+}
+
+export interface MeasurementResponse {
+  measurementId: string;
+  recoveryPlanId: string;
+  type: string;
+  value: number;
+  unit: string;
+  date: string;
+}
+
 export interface PainLogResponse {
   painLogId: string;
   recoveryPlanId: string;
@@ -194,6 +211,10 @@ export interface RehabServiceGrpc {
     data: AddExerciseRequest & { recoveryPlanId: string },
     metadata?: unknown,
   ): Observable<ExerciseResponse>;
+  deleteExercise(
+    data: { exerciseId: string },
+    metadata?: unknown,
+  ): Observable<{ exerciseId: string; recoveryPlanId: string; deleted: boolean }>;
   addAppointment(
     data: AddAppointmentRequest & { recoveryPlanId: string },
     metadata?: unknown,
@@ -214,6 +235,10 @@ export interface RehabServiceGrpc {
     data: AddPainLogRequest,
     metadata?: unknown,
   ): Observable<PainLogResponse>;
+  addMeasurement(
+    data: AddMeasurementRequest,
+    metadata?: unknown,
+  ): Observable<MeasurementResponse>;
   listPainLogs(
     data: ListPainLogsRequest,
     metadata?: unknown,

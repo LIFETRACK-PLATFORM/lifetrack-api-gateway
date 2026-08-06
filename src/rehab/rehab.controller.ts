@@ -6,6 +6,7 @@ import {
   OnModuleInit,
   Param,
   Post,
+  Delete,
   Query,
   Req,
   UseGuards,
@@ -20,6 +21,7 @@ import { parseGrpcError } from 'src/common/helpers/parse-grpc-error';
 import {
   AddAppointmentBodyDto,
   AddExerciseBodyDto,
+  AddMeasurementBodyDto,
   AddPainLogBodyDto,
   CreateRecoveryPlanBodyDto,
   LogExerciseBodyDto,
@@ -135,6 +137,18 @@ export class RehabController implements OnModuleInit {
       );
   }
 
+  @Delete('exercises/:id')
+  deleteExercise(@Req() req: RequestWithUser, @Param('id') exerciseId: string) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .deleteExercise({ exerciseId }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
   @Post('plans/:id/appointments')
   addAppointment(
     @Req() req: RequestWithUser,
@@ -160,6 +174,22 @@ export class RehabController implements OnModuleInit {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
       .addPainLog({ recoveryPlanId: id, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Post('plans/:id/measurements')
+  addMeasurement(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() body: AddMeasurementBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .addMeasurement({ recoveryPlanId: id, ...body }, metadata)
       .pipe(
         catchError((err) => {
           throw new RpcException(parseGrpcError(err));
