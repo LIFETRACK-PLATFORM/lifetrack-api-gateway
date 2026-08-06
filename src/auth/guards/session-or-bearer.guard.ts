@@ -41,7 +41,9 @@ export class SessionOrBearerGuard implements CanActivate, OnModuleInit {
       }
     }
 
-    const accessCookie = req.cookies?.[ACCESS_TOKEN_COOKIE] as string | undefined;
+    const accessCookie = req.cookies?.[ACCESS_TOKEN_COOKIE] as
+      | string
+      | undefined;
     if (accessCookie) {
       try {
         req.user = await this.validateAccessToken(accessCookie);

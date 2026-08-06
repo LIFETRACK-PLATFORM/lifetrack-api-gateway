@@ -112,7 +112,10 @@ export class RehabController implements OnModuleInit {
   }
 
   @Post('plans')
-  createPlan(@Req() req: RequestWithUser, @Body() body: CreateRecoveryPlanBodyDto) {
+  createPlan(
+    @Req() req: RequestWithUser,
+    @Body() body: CreateRecoveryPlanBodyDto,
+  ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService.createRecoveryPlan(body, metadata).pipe(
       catchError((err) => {
@@ -140,13 +143,11 @@ export class RehabController implements OnModuleInit {
   @Delete('exercises/:id')
   deleteExercise(@Req() req: RequestWithUser, @Param('id') exerciseId: string) {
     const metadata = buildUserMetadata(req.user.userId);
-    return this.rehabService
-      .deleteExercise({ exerciseId }, metadata)
-      .pipe(
-        catchError((err) => {
-          throw new RpcException(parseGrpcError(err));
-        }),
-      );
+    return this.rehabService.deleteExercise({ exerciseId }, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
   }
 
   @Post('plans/:id/appointments')

@@ -33,7 +33,10 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalFilters(new RpcCustomExceptionFilter(), new AllExceptionsFilter());
+  app.useGlobalFilters(
+    new RpcCustomExceptionFilter(),
+    new AllExceptionsFilter(),
+  );
 
   await app.listen(envs.port);
   logger.log(`Auth Service running on port ${envs.port}`);
