@@ -22,6 +22,8 @@ service RehabService {
   rpc GetWeeklySummary (GetWeeklySummaryRequest) returns (GetWeeklySummaryResponse);
   rpc AddPainLog (AddPainLogRequest) returns (PainLogResponse);
   rpc ListPainLogs (ListPainLogsRequest) returns (ListPainLogsResponse);
+  rpc SetAdHocProtocolDay (SetAdHocProtocolDayRequest) returns (SetAdHocProtocolDayResponse);
+  rpc ClearAdHocProtocolDay (ClearAdHocProtocolDayRequest) returns (ClearAdHocProtocolDayResponse);
 }
 
 message CreateRecoveryPlanRequest {
@@ -258,6 +260,7 @@ message RecoveryProgressResponse {
   repeated MeasurementResponse measurements = 8;
   repeated ProgressPhotoResponse progressPhotos = 9;
   repeated PainLogResponse painLogs = 10;
+  repeated AdHocProtocolDayEntry adHocProtocolDays = 11;
 }
 
 message MarkExerciseCompletionRequest {
@@ -333,4 +336,32 @@ message ListPainLogsRequest {
 
 message ListPainLogsResponse {
   repeated PainLogResponse painLogs = 1;
+}
+
+message AdHocProtocolDayEntry {
+  string adHocProtocolDayId = 1;
+  string targetDate = 2;
+  string sourceDate = 3;
+}
+
+message SetAdHocProtocolDayRequest {
+  string recoveryPlanId = 1;
+  string targetDate = 2;
+  string sourceDate = 3;
+}
+
+message SetAdHocProtocolDayResponse {
+  string adHocProtocolDayId = 1;
+  string recoveryPlanId = 2;
+  string targetDate = 3;
+  string sourceDate = 4;
+}
+
+message ClearAdHocProtocolDayRequest {
+  string recoveryPlanId = 1;
+  string targetDate = 2;
+}
+
+message ClearAdHocProtocolDayResponse {
+  bool cleared = 1;
 }

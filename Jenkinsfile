@@ -8,26 +8,43 @@ pipeline {
   stages {
     stage("Install") {
       steps {
-        sh "npm install -g pnpm@10.21.0"
-        sh "pnpm install --frozen-lockfile"
+        sh '''
+          set -e
+          corepack enable
+          corepack prepare pnpm@10.21.0 --activate
+          pnpm --version
+          pnpm install --frozen-lockfile
+        '''
       }
     }
 
     stage("Lint") {
       steps {
-        sh "pnpm run lint"
+        sh '''
+          set -e
+          corepack enable
+          pnpm run lint
+        '''
       }
     }
 
     stage("Test") {
       steps {
-        sh "pnpm run test:cov"
+        sh '''
+          set -e
+          corepack enable
+          pnpm run test:cov
+        '''
       }
     }
 
     stage("Build") {
       steps {
-        sh "pnpm run build"
+        sh '''
+          set -e
+          corepack enable
+          pnpm run build
+        '''
       }
     }
 

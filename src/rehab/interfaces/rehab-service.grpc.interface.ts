@@ -216,6 +216,28 @@ export interface ListPainLogsResponse {
   painLogs: PainLogResponse[];
 }
 
+export interface SetAdHocProtocolDayRequest {
+  recoveryPlanId: string;
+  targetDate: string;
+  sourceDate: string;
+}
+
+export interface SetAdHocProtocolDayResponse {
+  adHocProtocolDayId: string;
+  recoveryPlanId: string;
+  targetDate: string;
+  sourceDate: string;
+}
+
+export interface ClearAdHocProtocolDayRequest {
+  recoveryPlanId: string;
+  targetDate: string;
+}
+
+export interface ClearAdHocProtocolDayResponse {
+  cleared: boolean;
+}
+
 export interface UpdateRecoveryPlanStatusRequest {
   recoveryPlanId: string;
   status: string;
@@ -312,6 +334,14 @@ export interface RehabServiceGrpc {
     data: AddMeasurementRequest,
     metadata?: unknown,
   ): Observable<MeasurementResponse>;
+  setAdHocProtocolDay(
+    data: SetAdHocProtocolDayRequest,
+    metadata?: unknown,
+  ): Observable<SetAdHocProtocolDayResponse>;
+  clearAdHocProtocolDay(
+    data: ClearAdHocProtocolDayRequest,
+    metadata?: unknown,
+  ): Observable<ClearAdHocProtocolDayResponse>;
   listPainLogs(
     data: ListPainLogsRequest,
     metadata?: unknown,
