@@ -8,6 +8,7 @@ interface EnvVars {
   USER_GRPC_URL: string;
   REHAB_GRPC_URL: string;
   FINANCE_GRPC_URL: string;
+  VAULT_GRPC_URL: string;
   CORS_ORIGIN: string;
   OAUTH_REDIRECT_BASE_URL: string;
   GOOGLE_CLIENT_ID: string;
@@ -22,6 +23,7 @@ const envsSchema = joi
     USER_GRPC_URL: joi.string().required(),
     REHAB_GRPC_URL: joi.string().required(),
     FINANCE_GRPC_URL: joi.string().required(),
+    VAULT_GRPC_URL: joi.string().required(),
     CORS_ORIGIN: joi.string().required(),
     OAUTH_REDIRECT_BASE_URL: joi.string().required(),
     GOOGLE_CLIENT_ID: joi.string().required(),
@@ -45,6 +47,7 @@ export const envs = {
   userGrpcUrl: value.USER_GRPC_URL,
   rehabGrpcUrl: value.REHAB_GRPC_URL,
   financeGrpcUrl: value.FINANCE_GRPC_URL,
+  vaultGrpcUrl: value.VAULT_GRPC_URL,
   corsOrigin: value.CORS_ORIGIN,
   oauthRedirectBaseUrl: value.OAUTH_REDIRECT_BASE_URL,
   googleClientId: value.GOOGLE_CLIENT_ID,
