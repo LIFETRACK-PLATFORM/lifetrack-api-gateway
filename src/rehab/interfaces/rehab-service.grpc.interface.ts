@@ -245,6 +245,17 @@ export interface RehabServiceGrpc {
     recoveryPlanId: string;
     deleted: boolean;
   }>;
+  updateExercise(
+    data: {
+      exerciseId: string;
+      name: string;
+      targetSets: number;
+      targetReps: number;
+      phase: number;
+      daysOfWeek?: number[];
+    },
+    metadata?: unknown,
+  ): Observable<ExerciseResponse>;
   addAppointment(
     data: AddAppointmentRequest & { recoveryPlanId: string },
     metadata?: unknown,
@@ -253,6 +264,14 @@ export interface RehabServiceGrpc {
     data: MarkAppointmentAttendanceRequest,
     metadata?: unknown,
   ): Observable<MarkAppointmentAttendanceResponse>;
+  deleteAppointment(
+    data: { appointmentId: string },
+    metadata?: unknown,
+  ): Observable<{
+    appointmentId: string;
+    recoveryPlanId: string;
+    deleted: boolean;
+  }>;
   markExerciseCompletion(
     data: MarkExerciseCompletionRequest,
     metadata?: unknown,
