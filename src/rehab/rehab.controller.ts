@@ -243,11 +243,13 @@ export class RehabController implements OnModuleInit {
     @Param('id') appointmentId: string,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
-    return this.rehabService.deleteAppointment({ appointmentId }, metadata).pipe(
-      catchError((err) => {
-        throw new RpcException(parseGrpcError(err));
-      }),
-    );
+    return this.rehabService
+      .deleteAppointment({ appointmentId }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
   }
 
   @Post('plans/:id/pain-logs')

@@ -210,7 +210,7 @@ export class AddMeasurementBodyDto {
   @IsIn(MEASUREMENT_TYPES)
   type: MeasurementTypeValue;
 
-  @ValidateIf((o) => o.type === 'OTHER')
+  @ValidateIf((o: AddMeasurementBodyDto) => o.type === 'OTHER')
   @IsNotEmpty({ message: 'customLabel es obligatorio cuando type es OTHER' })
   @IsString()
   customLabel?: string;
@@ -231,7 +231,7 @@ export class UpdateMeasurementBodyDto {
   @IsIn(MEASUREMENT_TYPES)
   type: MeasurementTypeValue;
 
-  @ValidateIf((o) => o.type === 'OTHER')
+  @ValidateIf((o: UpdateMeasurementBodyDto) => o.type === 'OTHER')
   @IsNotEmpty({ message: 'customLabel es obligatorio cuando type es OTHER' })
   @IsString()
   customLabel?: string;
