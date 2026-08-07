@@ -17,6 +17,8 @@ const mockClientGrpc = {
     me: jest.fn(),
     forgotPassword: jest.fn(),
     resetPassword: jest.fn(),
+    loginWithOAuth: jest.fn(),
+    switchOAuthProvider: jest.fn(),
   }),
 };
 
@@ -24,6 +26,7 @@ function createMockResponse() {
   return {
     cookie: jest.fn(),
     clearCookie: jest.fn(),
+    redirect: jest.fn(),
   };
 }
 
@@ -46,6 +49,8 @@ describe('AuthController', () => {
     me: jest.Mock;
     forgotPassword: jest.Mock;
     resetPassword: jest.Mock;
+    loginWithOAuth: jest.Mock;
+    switchOAuthProvider: jest.Mock;
   };
 
   beforeEach(async () => {
@@ -218,6 +223,7 @@ describe('AuthController', () => {
       email: 'alice@test.com',
       roles: ['USER'],
       status: 'ACTIVE',
+      provider: 'GOOGLE',
     };
     authService.me.mockReturnValue(of(response));
     const req = createMockRequest({ refreshToken: 'cookie-refresh-token' });
@@ -376,5 +382,125 @@ describe('AuthController', () => {
           done();
         },
       });
+  });
+
+  describe('cambio de proveedor OAuth (intent=switch)', () => {
+    beforeEach(() => {
+      authService.switchOAuthProvider.mockClear();
+    });
+
+    it('startGoogleOAuth setea la cookie oauth_intent cuando hay sesión activa', () => {
+      const res = createMockResponse();
+      const req = createMockRequest({ refreshToken: 'cookie-refresh-token' });
+
+      controller.startGoogleOAuth('switch', req, asResponse(res));
+
+      expect(res.cookie).toHaveBeenCalledWith(
+        'oauth_intent',
+        'SWITCH',
+        expect.anything(),
+      );
+    });
+
+    it('startGoogleOAuth ignora intent=switch si no hay sesión activa', () => {
+      const res = createMockResponse();
+      const req = createMockRequest();
+
+      controller.startGoogleOAuth('switch', req, asResponse(res));
+
+      expect(res.cookie).not.toHaveBeenCalledWith(
+        'oauth_intent',
+        'SWITCH',
+        expect.anything(),
+      );
+    });
+
+    it('googleCallback con intent=switch llama a switchOAuthProvider y redirige al perfil', async () => {
+      authService.switchOAuthProvider.mockReturnValue(
+        of({ status: 'PROVIDER_SWITCHED', provider: 'GOOGLE' }),
+      );
+      const res = createMockResponse();
+      const req = createMockRequest({
+        oauth_state: 'state-1',
+        oauth_code_verifier: 'verifier-1',
+        oauth_provider: 'GOOGLE',
+        oauth_intent: 'SWITCH',
+        refreshToken: 'cookie-refresh-token',
+      });
+
+      await controller.googleCallback(
+        'auth-code',
+        'state-1',
+        undefined,
+        req,
+        asResponse(res),
+      );
+
+      expect(authService.switchOAuthProvider).toHaveBeenCalledWith({
+        refreshToken: 'cookie-refresh-token',
+        provider: 'GOOGLE',
+        code: 'auth-code',
+        codeVerifier: 'verifier-1',
+      });
+      expect(res.redirect).toHaveBeenCalledWith(
+        expect.stringContaining('/profile?providerSwitch=success'),
+      );
+      expect(res.clearCookie).toHaveBeenCalledWith(
+        'oauth_intent',
+        expect.anything(),
+      );
+    });
+
+    it('googleCallback con intent=switch redirige con error si el proveedor ya está vinculado a otra cuenta', async () => {
+      authService.switchOAuthProvider.mockReturnValue(
+        throwError(() => ({
+          code: 6,
+          details: 'Esa cuenta de Google ya está vinculada a otro usuario',
+        })),
+      );
+      const res = createMockResponse();
+      const req = createMockRequest({
+        oauth_state: 'state-1',
+        oauth_code_verifier: 'verifier-1',
+        oauth_provider: 'GOOGLE',
+        oauth_intent: 'SWITCH',
+        refreshToken: 'cookie-refresh-token',
+      });
+
+      await controller.googleCallback(
+        'auth-code',
+        'state-1',
+        undefined,
+        req,
+        asResponse(res),
+      );
+
+      expect(res.redirect).toHaveBeenCalledWith(
+        expect.stringContaining('/profile?providerSwitch=error'),
+      );
+    });
+
+    it('googleCallback con intent=switch pero sin sesión redirige con error sin llamar al servicio', async () => {
+      const res = createMockResponse();
+      const req = createMockRequest({
+        oauth_state: 'state-1',
+        oauth_code_verifier: 'verifier-1',
+        oauth_provider: 'GOOGLE',
+        oauth_intent: 'SWITCH',
+      });
+
+      await controller.googleCallback(
+        'auth-code',
+        'state-1',
+        undefined,
+        req,
+        asResponse(res),
+      );
+
+      expect(authService.switchOAuthProvider).not.toHaveBeenCalled();
+      expect(res.redirect).toHaveBeenCalledWith(
+        expect.stringContaining('/profile?providerSwitch=error'),
+      );
+    });
   });
 });
