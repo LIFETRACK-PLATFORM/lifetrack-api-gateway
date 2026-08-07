@@ -28,6 +28,7 @@ import {
   LogExerciseBodyDto,
   MarkAppointmentAttendanceBodyDto,
   MarkExerciseCompletionBodyDto,
+  SetAdHocProtocolDayBodyDto,
   UpdateAppointmentBodyDto,
   UpdateExerciseBodyDto,
   UpdateRecoveryPlanStatusBodyDto,
@@ -305,6 +306,38 @@ export class RehabController implements OnModuleInit {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
       .markExerciseCompletion({ exerciseId, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Post('plans/:id/ad-hoc-protocol')
+  setAdHocProtocolDay(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() body: SetAdHocProtocolDayBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .setAdHocProtocolDay({ recoveryPlanId: id, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Delete('plans/:id/ad-hoc-protocol/:date')
+  clearAdHocProtocolDay(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Param('date') date: string,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .clearAdHocProtocolDay({ recoveryPlanId: id, targetDate: date }, metadata)
       .pipe(
         catchError((err) => {
           throw new RpcException(parseGrpcError(err));

@@ -214,3 +214,11 @@ export class AddMeasurementBodyDto {
   @IsDateString()
   date: string;
 }
+
+export class SetAdHocProtocolDayBodyDto {
+  @IsDateString()
+  targetDate: string;
+
+  @IsDateString()
+  sourceDate: string;
+}
