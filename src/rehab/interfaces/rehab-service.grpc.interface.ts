@@ -187,6 +187,26 @@ export interface AddMeasurementRequest {
   value: number;
   unit: string;
   date: string;
+  customLabel?: string;
+}
+
+export interface UpdateMeasurementRequest {
+  measurementId: string;
+  type: string;
+  value: number;
+  unit: string;
+  date: string;
+  customLabel?: string;
+}
+
+export interface DeleteMeasurementRequest {
+  measurementId: string;
+}
+
+export interface DeleteMeasurementResponse {
+  measurementId: string;
+  recoveryPlanId: string;
+  deleted: boolean;
 }
 
 export interface MeasurementResponse {
@@ -196,6 +216,7 @@ export interface MeasurementResponse {
   value: number;
   unit: string;
   date: string;
+  customLabel?: string;
 }
 
 export interface PainLogResponse {
@@ -334,6 +355,14 @@ export interface RehabServiceGrpc {
     data: AddMeasurementRequest,
     metadata?: unknown,
   ): Observable<MeasurementResponse>;
+  updateMeasurement(
+    data: UpdateMeasurementRequest,
+    metadata?: unknown,
+  ): Observable<MeasurementResponse>;
+  deleteMeasurement(
+    data: DeleteMeasurementRequest,
+    metadata?: unknown,
+  ): Observable<DeleteMeasurementResponse>;
   setAdHocProtocolDay(
     data: SetAdHocProtocolDayRequest,
     metadata?: unknown,

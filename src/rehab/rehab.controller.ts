@@ -31,6 +31,7 @@ import {
   SetAdHocProtocolDayBodyDto,
   UpdateAppointmentBodyDto,
   UpdateExerciseBodyDto,
+  UpdateMeasurementBodyDto,
   UpdateRecoveryPlanStatusBodyDto,
 } from './dto/rehab.dto';
 import { buildUserMetadata } from './helpers/build-user-metadata';
@@ -242,11 +243,13 @@ export class RehabController implements OnModuleInit {
     @Param('id') appointmentId: string,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
-    return this.rehabService.deleteAppointment({ appointmentId }, metadata).pipe(
-      catchError((err) => {
-        throw new RpcException(parseGrpcError(err));
-      }),
-    );
+    return this.rehabService
+      .deleteAppointment({ appointmentId }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
   }
 
   @Post('plans/:id/pain-logs')
@@ -274,6 +277,37 @@ export class RehabController implements OnModuleInit {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
       .addMeasurement({ recoveryPlanId: id, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Patch('measurements/:id')
+  updateMeasurement(
+    @Req() req: RequestWithUser,
+    @Param('id') measurementId: string,
+    @Body() body: UpdateMeasurementBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .updateMeasurement({ measurementId, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Delete('measurements/:id')
+  deleteMeasurement(
+    @Req() req: RequestWithUser,
+    @Param('id') measurementId: string,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .deleteMeasurement({ measurementId }, metadata)
       .pipe(
         catchError((err) => {
           throw new RpcException(parseGrpcError(err));

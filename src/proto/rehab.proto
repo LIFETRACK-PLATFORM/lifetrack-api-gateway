@@ -15,6 +15,8 @@ service RehabService {
   rpc UpdateAppointment (UpdateAppointmentRequest) returns (AppointmentResponse);
   rpc DeleteAppointment (DeleteAppointmentRequest) returns (DeleteAppointmentResponse);
   rpc AddMeasurement (AddMeasurementRequest) returns (MeasurementResponse);
+  rpc UpdateMeasurement (UpdateMeasurementRequest) returns (MeasurementResponse);
+  rpc DeleteMeasurement (DeleteMeasurementRequest) returns (DeleteMeasurementResponse);
   rpc AddProgressPhoto (AddProgressPhotoRequest) returns (ProgressPhotoResponse);
   rpc ListRecoveryProgress (ListRecoveryProgressRequest) returns (RecoveryProgressResponse);
   rpc MarkExerciseCompletion (MarkExerciseCompletionRequest) returns (MarkExerciseCompletionResponse);
@@ -147,10 +149,6 @@ message AppointmentResponse {
   string title = 8;
 }
 
-message AddAppointmentResponse {
-  repeated AppointmentResponse appointments = 1;
-}
-
 message UpdateAppointmentRequest {
   string appointmentId = 1;
   string title = 2;
@@ -158,6 +156,10 @@ message UpdateAppointmentRequest {
   string provider = 4;
   string type = 5;
   string notes = 6;
+}
+
+message AddAppointmentResponse {
+  repeated AppointmentResponse appointments = 1;
 }
 
 message MarkAppointmentAttendanceRequest {
@@ -187,6 +189,26 @@ message AddMeasurementRequest {
   double value = 3;
   string unit = 4;
   string date = 5;
+  string customLabel = 6;
+}
+
+message UpdateMeasurementRequest {
+  string measurementId = 1;
+  string type = 2;
+  double value = 3;
+  string unit = 4;
+  string date = 5;
+  string customLabel = 6;
+}
+
+message DeleteMeasurementRequest {
+  string measurementId = 1;
+}
+
+message DeleteMeasurementResponse {
+  string measurementId = 1;
+  string recoveryPlanId = 2;
+  bool deleted = 3;
 }
 
 message MeasurementResponse {
@@ -196,6 +218,7 @@ message MeasurementResponse {
   double value = 4;
   string unit = 5;
   string date = 6;
+  string customLabel = 7;
 }
 
 message AddProgressPhotoRequest {
