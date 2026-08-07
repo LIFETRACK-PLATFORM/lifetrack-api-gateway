@@ -80,6 +80,7 @@ export interface AppointmentResponse {
   provider: string;
   notes?: string;
   type: string;
+  attended?: boolean;
 }
 
 export interface AddAppointmentRequest {
@@ -92,6 +93,17 @@ export interface AddAppointmentRequest {
 
 export interface AddAppointmentResponse {
   appointments: AppointmentResponse[];
+}
+
+export interface MarkAppointmentAttendanceRequest {
+  appointmentId: string;
+  attended: boolean;
+}
+
+export interface MarkAppointmentAttendanceResponse {
+  appointmentId: string;
+  recoveryPlanId: string;
+  attended: boolean;
 }
 
 export interface MarkExerciseCompletionRequest {
@@ -237,6 +249,10 @@ export interface RehabServiceGrpc {
     data: AddAppointmentRequest & { recoveryPlanId: string },
     metadata?: unknown,
   ): Observable<AddAppointmentResponse>;
+  markAppointmentAttendance(
+    data: MarkAppointmentAttendanceRequest,
+    metadata?: unknown,
+  ): Observable<MarkAppointmentAttendanceResponse>;
   markExerciseCompletion(
     data: MarkExerciseCompletionRequest,
     metadata?: unknown,

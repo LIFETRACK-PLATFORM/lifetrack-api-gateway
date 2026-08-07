@@ -10,6 +10,7 @@ service RehabService {
   rpc DeleteExercise (DeleteExerciseRequest) returns (DeleteExerciseResponse);
   rpc LogExercise (LogExerciseRequest) returns (ExerciseLogResponse);
   rpc AddAppointment (AddAppointmentRequest) returns (AddAppointmentResponse);
+  rpc MarkAppointmentAttendance (MarkAppointmentAttendanceRequest) returns (MarkAppointmentAttendanceResponse);
   rpc AddMeasurement (AddMeasurementRequest) returns (MeasurementResponse);
   rpc AddProgressPhoto (AddProgressPhotoRequest) returns (ProgressPhotoResponse);
   rpc ListRecoveryProgress (ListRecoveryProgressRequest) returns (RecoveryProgressResponse);
@@ -121,10 +122,22 @@ message AppointmentResponse {
   string provider = 4;
   string notes = 5;
   string type = 6;
+  optional bool attended = 7;
 }
 
 message AddAppointmentResponse {
   repeated AppointmentResponse appointments = 1;
+}
+
+message MarkAppointmentAttendanceRequest {
+  string appointmentId = 1;
+  bool attended = 2;
+}
+
+message MarkAppointmentAttendanceResponse {
+  string appointmentId = 1;
+  string recoveryPlanId = 2;
+  bool attended = 3;
 }
 
 message AddMeasurementRequest {
