@@ -23,7 +23,12 @@ import {
   CreateAccountBodyDto,
   CreateBudgetBodyDto,
   CreateCategoryBodyDto,
+  CreateRecurringItemBodyDto,
   CreateTransactionBodyDto,
+  UpdateAccountBodyDto,
+  UpdateBudgetBodyDto,
+  UpdateCategoryBodyDto,
+  UpdateRecurringItemBodyDto,
   UpdateTransactionBodyDto,
 } from './dto/finance.dto';
 import { buildUserMetadata } from './helpers/build-user-metadata';
@@ -66,6 +71,32 @@ export class FinanceController implements OnModuleInit {
     );
   }
 
+  @Put('accounts/:id')
+  updateAccount(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() dto: UpdateAccountBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .updateAccount({ accountId: id, ...dto }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Delete('accounts/:id')
+  deleteAccount(@Req() req: RequestWithUser, @Param('id') id: string) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService.deleteAccount({ accountId: id }, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
+  }
+
   @Post('categories')
   createCategory(
     @Req() req: RequestWithUser,
@@ -87,6 +118,34 @@ export class FinanceController implements OnModuleInit {
         throw new RpcException(parseGrpcError(err));
       }),
     );
+  }
+
+  @Put('categories/:id')
+  updateCategory(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() dto: UpdateCategoryBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .updateCategory({ categoryId: id, ...dto }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Delete('categories/:id')
+  deleteCategory(@Req() req: RequestWithUser, @Param('id') id: string) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .deleteCategory({ categoryId: id }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
   }
 
   @Post('transactions')
@@ -158,6 +217,51 @@ export class FinanceController implements OnModuleInit {
     );
   }
 
+  @Put('budgets/:id')
+  updateBudget(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() dto: UpdateBudgetBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .updateBudget({ budgetId: id, ...dto }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Delete('budgets/:id')
+  deleteBudget(@Req() req: RequestWithUser, @Param('id') id: string) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService.deleteBudget({ budgetId: id }, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
+  }
+
+  @Get('budgets')
+  listBudgets(
+    @Req() req: RequestWithUser,
+    @Query('month') month: string,
+    @Query('year') year: string,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .listBudgets(
+        { periodMonth: Number(month), periodYear: Number(year) },
+        metadata,
+      )
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
   @Get('budgets/status')
   getBudgetStatus(
     @Req() req: RequestWithUser,
@@ -180,5 +284,85 @@ export class FinanceController implements OnModuleInit {
           throw new RpcException(parseGrpcError(err));
         }),
       );
+  }
+
+  @Get('summary')
+  getMonthlySummary(
+    @Req() req: RequestWithUser,
+    @Query('month') month: string,
+    @Query('year') year: string,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .getMonthlySummary(
+        { periodMonth: Number(month), periodYear: Number(year) },
+        metadata,
+      )
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Post('recurring-items')
+  createRecurringItem(
+    @Req() req: RequestWithUser,
+    @Body() dto: CreateRecurringItemBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService.createRecurringItem(dto, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
+  }
+
+  @Get('recurring-items')
+  listRecurringItems(@Req() req: RequestWithUser) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService.listRecurringItems({}, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
+  }
+
+  @Put('recurring-items/:id')
+  updateRecurringItem(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() dto: UpdateRecurringItemBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .updateRecurringItem({ recurringItemId: id, ...dto }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Delete('recurring-items/:id')
+  deleteRecurringItem(@Req() req: RequestWithUser, @Param('id') id: string) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .deleteRecurringItem({ recurringItemId: id }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Post('recurring-items/process')
+  processRecurringItems(@Req() req: RequestWithUser) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService.processRecurringItems({}, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
   }
 }

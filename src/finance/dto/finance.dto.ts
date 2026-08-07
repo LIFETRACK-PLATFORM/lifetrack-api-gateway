@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDateString,
   IsIn,
   IsInt,
@@ -19,13 +20,24 @@ export class CreateAccountBodyDto {
   @IsIn(['CASH', 'BANK', 'CARD', 'OTHER'])
   type: 'CASH' | 'BANK' | 'CARD' | 'OTHER';
 
-  @IsString()
-  @IsNotEmpty()
-  currency: string;
+  @IsIn(['PEN', 'USD'])
+  currency: 'PEN' | 'USD';
 
   @IsNumber()
   @Min(0)
   initialBalance: number;
+}
+
+export class UpdateAccountBodyDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsIn(['CASH', 'BANK', 'CARD', 'OTHER'])
+  type: 'CASH' | 'BANK' | 'CARD' | 'OTHER';
+
+  @IsIn(['PEN', 'USD'])
+  currency: 'PEN' | 'USD';
 }
 
 export class CreateCategoryBodyDto {
@@ -35,6 +47,20 @@ export class CreateCategoryBodyDto {
 
   @IsIn(['INCOME', 'EXPENSE'])
   kind: 'INCOME' | 'EXPENSE';
+
+  @IsOptional()
+  @IsString()
+  icon?: string;
+
+  @IsOptional()
+  @IsString()
+  color?: string;
+}
+
+export class UpdateCategoryBodyDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
   @IsOptional()
   @IsString()
@@ -66,6 +92,10 @@ export class CreateTransactionBodyDto {
 
   @IsDateString()
   occurredAt: string;
+
+  @IsOptional()
+  @IsString()
+  recurringItemId?: string;
 }
 
 export class UpdateTransactionBodyDto {
@@ -96,4 +126,68 @@ export class CreateBudgetBodyDto {
   @IsInt()
   @Min(2000)
   periodYear: number;
+}
+
+export class UpdateBudgetBodyDto {
+  @IsPositive()
+  amount: number;
+}
+
+export class CreateRecurringItemBodyDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsPositive()
+  amount: number;
+
+  @IsIn(['INCOME', 'EXPENSE'])
+  kind: 'INCOME' | 'EXPENSE';
+
+  @IsString()
+  @IsNotEmpty()
+  accountId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  categoryId: string;
+
+  @IsInt()
+  @Min(1)
+  @Max(28)
+  dayOfMonth: number;
+
+  @IsIn(['AUTO', 'REMIND'])
+  mode: 'AUTO' | 'REMIND';
+}
+
+export class UpdateRecurringItemBodyDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsPositive()
+  amount: number;
+
+  @IsIn(['INCOME', 'EXPENSE'])
+  kind: 'INCOME' | 'EXPENSE';
+
+  @IsString()
+  @IsNotEmpty()
+  accountId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  categoryId: string;
+
+  @IsInt()
+  @Min(1)
+  @Max(28)
+  dayOfMonth: number;
+
+  @IsIn(['AUTO', 'REMIND'])
+  mode: 'AUTO' | 'REMIND';
+
+  @IsBoolean()
+  active: boolean;
 }
