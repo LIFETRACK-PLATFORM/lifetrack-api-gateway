@@ -24,6 +24,7 @@ message CreateVaultItemRequest {
   string iv = 4;
   string salt = 5;
   string encryptionVersion = 6;
+  string category = 7;
 }
 
 message VaultItemResponse {
@@ -34,6 +35,7 @@ message VaultItemResponse {
   string iv = 5;
   string salt = 6;
   string encryptionVersion = 7;
+  string category = 8;
 }
 
 message ListVaultItemsRequest {}
@@ -45,6 +47,7 @@ message VaultItemSummary {
   string encryptionVersion = 4;
   string createdAt = 5;
   string updatedAt = 6;
+  string category = 7;
 }
 
 message ListVaultItemsResponse {
@@ -63,6 +66,7 @@ message EncryptedVaultItemResponse {
   string iv = 5;
   string salt = 6;
   string encryptionVersion = 7;
+  string category = 8;
 }
 
 message UpdateVaultItemRequest {
@@ -73,6 +77,7 @@ message UpdateVaultItemRequest {
   string iv = 5;
   string salt = 6;
   string encryptionVersion = 7;
+  string category = 8;
 }
 
 message DeleteVaultItemRequest {
