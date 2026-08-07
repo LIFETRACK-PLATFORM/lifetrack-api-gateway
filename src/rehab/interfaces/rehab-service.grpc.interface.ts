@@ -190,11 +190,25 @@ export interface ListPainLogsResponse {
   painLogs: PainLogResponse[];
 }
 
+export interface UpdateRecoveryPlanStatusRequest {
+  recoveryPlanId: string;
+  status: string;
+}
+
+export interface UpdateRecoveryPlanStatusResponse {
+  recoveryPlanId: string;
+  status: string;
+}
+
 export interface RehabServiceGrpc {
   listRecoveryPlansByUser(
     data: Record<string, never>,
     metadata?: unknown,
   ): Observable<ListRecoveryPlansByUserResponse>;
+  updateRecoveryPlanStatus(
+    data: UpdateRecoveryPlanStatusRequest,
+    metadata?: unknown,
+  ): Observable<UpdateRecoveryPlanStatusResponse>;
   createRecoveryPlan(
     data: CreateRecoveryPlanRequest & { userId?: string },
     metadata?: unknown,

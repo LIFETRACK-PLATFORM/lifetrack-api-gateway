@@ -5,6 +5,7 @@ import {
   Inject,
   OnModuleInit,
   Param,
+  Patch,
   Post,
   Delete,
   Query,
@@ -26,6 +27,7 @@ import {
   CreateRecoveryPlanBodyDto,
   LogExerciseBodyDto,
   MarkExerciseCompletionBodyDto,
+  UpdateRecoveryPlanStatusBodyDto,
 } from './dto/rehab.dto';
 import { buildUserMetadata } from './helpers/build-user-metadata';
 import { RehabServiceGrpc } from './interfaces/rehab-service.grpc.interface';
@@ -122,6 +124,22 @@ export class RehabController implements OnModuleInit {
         throw new RpcException(parseGrpcError(err));
       }),
     );
+  }
+
+  @Patch('plans/:id/status')
+  updatePlanStatus(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() body: UpdateRecoveryPlanStatusBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .updateRecoveryPlanStatus({ recoveryPlanId: id, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
   }
 
   @Post('plans/:id/exercises')
