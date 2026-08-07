@@ -7,6 +7,7 @@ export interface VaultSaltResponse {
 export interface CreateVaultItemRequest {
   site: string;
   username: string;
+  category?: string;
   encryptedBlob: string;
   iv: string;
   salt: string;
@@ -18,6 +19,7 @@ export interface VaultItemResponse {
   userId: string;
   site: string;
   username: string;
+  category: string;
   iv: string;
   salt: string;
   encryptionVersion: string;
@@ -27,6 +29,7 @@ export interface VaultItemSummary {
   vaultItemId: string;
   site: string;
   username: string;
+  category: string;
   encryptionVersion: string;
   createdAt: string;
   updatedAt: string;
@@ -40,6 +43,7 @@ export interface EncryptedVaultItemResponse {
   vaultItemId: string;
   site: string;
   username: string;
+  category: string;
   encryptedBlob: string;
   iv: string;
   salt: string;
@@ -50,6 +54,7 @@ export interface UpdateVaultItemRequest {
   vaultItemId: string;
   site: string;
   username: string;
+  category?: string;
   encryptedBlob: string;
   iv: string;
   salt: string;

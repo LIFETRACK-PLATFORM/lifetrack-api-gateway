@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateVaultItemBodyDto {
   @IsString()
@@ -8,6 +8,11 @@ export class CreateVaultItemBodyDto {
   @IsString()
   @IsNotEmpty()
   username: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  category?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -34,6 +39,11 @@ export class UpdateVaultItemBodyDto {
   @IsString()
   @IsNotEmpty()
   username: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  category?: string;
 
   @IsString()
   @IsNotEmpty()
