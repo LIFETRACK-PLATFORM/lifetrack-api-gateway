@@ -8,10 +8,25 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
   Max,
   Min,
+  ValidateIf,
 } from 'class-validator';
+
+const MEASUREMENT_TYPES = [
+  'FLEXION_DEGREES',
+  'EXTENSION_DEGREES',
+  'QUAD_CIRCUMFERENCE_CM',
+  'WEIGHT_KG',
+  'WAIST_CM',
+  'HIP_CM',
+  'NECK_CM',
+  'OTHER',
+] as const;
+
+type MeasurementTypeValue = (typeof MEASUREMENT_TYPES)[number];
 
 export class CreateRecoveryPlanBodyDto {
   @IsString()
@@ -192,19 +207,37 @@ export class AddPainLogBodyDto {
 }
 
 export class AddMeasurementBodyDto {
-  @IsIn([
-    'FLEXION_DEGREES',
-    'EXTENSION_DEGREES',
-    'QUAD_CIRCUMFERENCE_CM',
-    'WEIGHT_KG',
-  ])
-  type:
-    | 'FLEXION_DEGREES'
-    | 'EXTENSION_DEGREES'
-    | 'QUAD_CIRCUMFERENCE_CM'
-    | 'WEIGHT_KG';
+  @IsIn(MEASUREMENT_TYPES)
+  type: MeasurementTypeValue;
+
+  @ValidateIf((o) => o.type === 'OTHER')
+  @IsNotEmpty({ message: 'customLabel es obligatorio cuando type es OTHER' })
+  @IsString()
+  customLabel?: string;
 
   @IsNumber()
+  @IsPositive()
+  value: number;
+
+  @IsString()
+  @IsNotEmpty()
+  unit: string;
+
+  @IsDateString()
+  date: string;
+}
+
+export class UpdateMeasurementBodyDto {
+  @IsIn(MEASUREMENT_TYPES)
+  type: MeasurementTypeValue;
+
+  @ValidateIf((o) => o.type === 'OTHER')
+  @IsNotEmpty({ message: 'customLabel es obligatorio cuando type es OTHER' })
+  @IsString()
+  customLabel?: string;
+
+  @IsNumber()
+  @IsPositive()
   value: number;
 
   @IsString()
