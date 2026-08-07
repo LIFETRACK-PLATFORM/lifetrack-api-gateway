@@ -31,6 +31,9 @@ export class AddExerciseBodyDto {
   @IsNotEmpty()
   name: string;
 
+  @IsIn(['REPS', 'DURATION'])
+  metricType: 'REPS' | 'DURATION';
+
   @IsInt()
   @Min(1)
   targetSets: number;
@@ -39,13 +42,18 @@ export class AddExerciseBodyDto {
   @Min(1)
   targetReps: number;
 
+  @IsOptional()
   @IsInt()
   @Min(1)
-  phase: number;
+  targetDurationMinutes?: number;
 
   @IsOptional()
   @IsString()
   referenceMediaUrl?: string;
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
 
   @IsOptional()
   @IsArray()
@@ -61,6 +69,9 @@ export class UpdateExerciseBodyDto {
   @IsNotEmpty()
   name: string;
 
+  @IsIn(['REPS', 'DURATION'])
+  metricType: 'REPS' | 'DURATION';
+
   @IsInt()
   @Min(1)
   targetSets: number;
@@ -69,9 +80,14 @@ export class UpdateExerciseBodyDto {
   @Min(1)
   targetReps: number;
 
+  @IsOptional()
   @IsInt()
   @Min(1)
-  phase: number;
+  targetDurationMinutes?: number;
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
 
   @IsOptional()
   @IsArray()
@@ -96,6 +112,11 @@ export class LogExerciseBodyDto {
 }
 
 export class AddAppointmentBodyDto {
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  title?: string;
+
   @IsDateString()
   date: string;
 
@@ -115,6 +136,27 @@ export class AddAppointmentBodyDto {
   @Min(0)
   @Max(12)
   repeatWeeks?: number;
+}
+
+export class UpdateAppointmentBodyDto {
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  title?: string;
+
+  @IsDateString()
+  date: string;
+
+  @IsString()
+  @IsNotEmpty()
+  provider: string;
+
+  @IsIn(['THERAPY', 'MEDICAL'])
+  type: 'THERAPY' | 'MEDICAL';
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
 }
 
 export class MarkAppointmentAttendanceBodyDto {

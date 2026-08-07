@@ -12,6 +12,7 @@ service RehabService {
   rpc LogExercise (LogExerciseRequest) returns (ExerciseLogResponse);
   rpc AddAppointment (AddAppointmentRequest) returns (AddAppointmentResponse);
   rpc MarkAppointmentAttendance (MarkAppointmentAttendanceRequest) returns (MarkAppointmentAttendanceResponse);
+  rpc UpdateAppointment (UpdateAppointmentRequest) returns (AppointmentResponse);
   rpc DeleteAppointment (DeleteAppointmentRequest) returns (DeleteAppointmentResponse);
   rpc AddMeasurement (AddMeasurementRequest) returns (MeasurementResponse);
   rpc AddProgressPhoto (AddProgressPhotoRequest) returns (ProgressPhotoResponse);
@@ -69,8 +70,10 @@ message AddExerciseRequest {
   int32 targetSets = 3;
   int32 targetReps = 4;
   string referenceMediaUrl = 5;
-  int32 phase = 6;
   repeated int32 daysOfWeek = 7;
+  string metricType = 8;
+  int32 targetDurationMinutes = 9;
+  string notes = 10;
 }
 
 message ExerciseResponse {
@@ -79,8 +82,10 @@ message ExerciseResponse {
   string name = 3;
   int32 targetSets = 4;
   int32 targetReps = 5;
-  int32 phase = 6;
   repeated int32 daysOfWeek = 7;
+  string metricType = 8;
+  int32 targetDurationMinutes = 9;
+  string notes = 10;
 }
 
 message UpdateExerciseRequest {
@@ -88,8 +93,10 @@ message UpdateExerciseRequest {
   string name = 2;
   int32 targetSets = 3;
   int32 targetReps = 4;
-  int32 phase = 5;
   repeated int32 daysOfWeek = 6;
+  string metricType = 8;
+  int32 targetDurationMinutes = 9;
+  string notes = 10;
 }
 
 message DeleteExerciseRequest {
@@ -124,6 +131,7 @@ message AddAppointmentRequest {
   string notes = 4;
   string type = 5;
   int32 repeatWeeks = 6;
+  string title = 7;
 }
 
 message AppointmentResponse {
@@ -134,10 +142,20 @@ message AppointmentResponse {
   string notes = 5;
   string type = 6;
   optional bool attended = 7;
+  string title = 8;
 }
 
 message AddAppointmentResponse {
   repeated AppointmentResponse appointments = 1;
+}
+
+message UpdateAppointmentRequest {
+  string appointmentId = 1;
+  string title = 2;
+  string date = 3;
+  string provider = 4;
+  string type = 5;
+  string notes = 6;
 }
 
 message MarkAppointmentAttendanceRequest {
@@ -212,10 +230,13 @@ message ExerciseProgress {
   string name = 2;
   int32 targetSets = 3;
   int32 targetReps = 4;
-  int32 phase = 5;
   repeated ExerciseLogEntry logs = 6;
   repeated int32 daysOfWeek = 7;
   repeated ExerciseCompletionEntry completions = 8;
+  bool completedToday = 9;
+  string metricType = 10;
+  int32 targetDurationMinutes = 11;
+  string notes = 12;
 }
 
 message PainLogResponse {
@@ -260,7 +281,6 @@ message TodayExerciseEntry {
   string name = 2;
   int32 targetSets = 3;
   int32 targetReps = 4;
-  int32 phase = 5;
   bool scheduledToday = 6;
   bool completedToday = 7;
   bool urgent = 8;
