@@ -95,6 +95,30 @@ export interface ResendVerificationResponse {
   success: boolean;
 }
 
+export interface LoginWithOAuthRequest {
+  provider: string;
+  code: string;
+  codeVerifier: string;
+}
+
+export interface LoginWithOAuthResponse {
+  status: string;
+  accessToken?: string;
+  refreshToken?: string;
+  userId?: string;
+  email?: string;
+  roles?: string[];
+  credentialStatus?: string;
+  linkToken?: string;
+  provider?: string;
+}
+
+export interface LinkOAuthAccountRequest {
+  provider: string;
+  linkToken: string;
+  password: string;
+}
+
 export interface AuthServiceGrpc {
   register(data: RegisterRequest): Observable<RegisterResponse>;
   login(data: LoginRequest): Observable<LoginResponse>;
@@ -110,4 +134,8 @@ export interface AuthServiceGrpc {
   resendVerification(
     data: ResendVerificationRequest,
   ): Observable<ResendVerificationResponse>;
+  loginWithOAuth(
+    data: LoginWithOAuthRequest,
+  ): Observable<LoginWithOAuthResponse>;
+  linkOAuthAccount(data: LinkOAuthAccountRequest): Observable<LoginResponse>;
 }

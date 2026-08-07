@@ -9,6 +9,9 @@ interface EnvVars {
   REHAB_GRPC_URL: string;
   FINANCE_GRPC_URL: string;
   CORS_ORIGIN: string;
+  OAUTH_REDIRECT_BASE_URL: string;
+  GOOGLE_CLIENT_ID: string;
+  GITHUB_CLIENT_ID: string;
 }
 
 const envsSchema = joi
@@ -20,6 +23,9 @@ const envsSchema = joi
     REHAB_GRPC_URL: joi.string().required(),
     FINANCE_GRPC_URL: joi.string().required(),
     CORS_ORIGIN: joi.string().required(),
+    OAUTH_REDIRECT_BASE_URL: joi.string().required(),
+    GOOGLE_CLIENT_ID: joi.string().required(),
+    GITHUB_CLIENT_ID: joi.string().required(),
   })
   .unknown(true);
 
@@ -40,4 +46,7 @@ export const envs = {
   rehabGrpcUrl: value.REHAB_GRPC_URL,
   financeGrpcUrl: value.FINANCE_GRPC_URL,
   corsOrigin: value.CORS_ORIGIN,
+  oauthRedirectBaseUrl: value.OAUTH_REDIRECT_BASE_URL,
+  googleClientId: value.GOOGLE_CLIENT_ID,
+  githubClientId: value.GITHUB_CLIENT_ID,
 };
