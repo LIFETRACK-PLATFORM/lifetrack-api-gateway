@@ -384,6 +384,37 @@ describe('AuthController', () => {
       });
   });
 
+  it('googleCallback redirige a /login con el mensaje real si loginWithOAuth falla, en vez de lanzar la excepción cruda', async () => {
+    authService.loginWithOAuth.mockReturnValue(
+      throwError(() => ({
+        code: 6,
+        details:
+          'Ya existe una cuenta con el email ana@test.com registrada con GitHub. Inicia sesión con ese proveedor.',
+      })),
+    );
+    const res = createMockResponse();
+    const req = createMockRequest({
+      oauth_state: 'state-1',
+      oauth_code_verifier: 'verifier-1',
+      oauth_provider: 'GOOGLE',
+    });
+
+    await controller.googleCallback(
+      'auth-code',
+      'state-1',
+      undefined,
+      req,
+      asResponse(res),
+    );
+
+    expect(res.redirect).toHaveBeenCalledWith(
+      expect.stringContaining('/login?error=oauth_failed&reason='),
+    );
+    expect(res.redirect).toHaveBeenCalledWith(
+      expect.stringContaining(encodeURIComponent('registrada con GitHub')),
+    );
+  });
+
   describe('cambio de proveedor OAuth (intent=switch)', () => {
     beforeEach(() => {
       authService.switchOAuthProvider.mockClear();
