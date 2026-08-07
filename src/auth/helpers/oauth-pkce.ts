@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from 'crypto';
+import { cookieSecure } from '../constants/session-cookies';
 
 export type OAuthPkceSession = {
   state: string;
@@ -23,8 +24,8 @@ export const OAUTH_PROVIDER_COOKIE = 'oauth_provider';
 export function oauthSessionCookieOptions() {
   return {
     httpOnly: true,
-    secure: true,
-    sameSite: 'strict' as const,
+    secure: cookieSecure(),
+    sameSite: 'lax' as const,
     path: '/auth',
     maxAge: 10 * 60 * 1000,
   };
