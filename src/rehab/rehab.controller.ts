@@ -28,6 +28,7 @@ import {
   LogExerciseBodyDto,
   MarkAppointmentAttendanceBodyDto,
   MarkExerciseCompletionBodyDto,
+  UpdateExerciseBodyDto,
   UpdateRecoveryPlanStatusBodyDto,
 } from './dto/rehab.dto';
 import { buildUserMetadata } from './helpers/build-user-metadata';
@@ -169,6 +170,22 @@ export class RehabController implements OnModuleInit {
     );
   }
 
+  @Patch('exercises/:id')
+  updateExercise(
+    @Req() req: RequestWithUser,
+    @Param('id') exerciseId: string,
+    @Body() body: UpdateExerciseBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .updateExercise({ exerciseId, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
   @Post('plans/:id/appointments')
   addAppointment(
     @Req() req: RequestWithUser,
@@ -199,6 +216,19 @@ export class RehabController implements OnModuleInit {
           throw new RpcException(parseGrpcError(err));
         }),
       );
+  }
+
+  @Delete('appointments/:id')
+  deleteAppointment(
+    @Req() req: RequestWithUser,
+    @Param('id') appointmentId: string,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService.deleteAppointment({ appointmentId }, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
   }
 
   @Post('plans/:id/pain-logs')
