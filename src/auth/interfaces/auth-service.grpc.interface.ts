@@ -60,6 +60,7 @@ export interface MeResponse {
   email: string;
   roles: string[];
   status: string;
+  provider: string;
 }
 
 export interface ForgotPasswordRequest {
@@ -119,6 +120,18 @@ export interface LinkOAuthAccountRequest {
   password: string;
 }
 
+export interface SwitchOAuthProviderRequest {
+  refreshToken: string;
+  provider: string;
+  code: string;
+  codeVerifier: string;
+}
+
+export interface SwitchOAuthProviderResponse {
+  status: string;
+  provider: string;
+}
+
 export interface AuthServiceGrpc {
   register(data: RegisterRequest): Observable<RegisterResponse>;
   login(data: LoginRequest): Observable<LoginResponse>;
@@ -138,4 +151,7 @@ export interface AuthServiceGrpc {
     data: LoginWithOAuthRequest,
   ): Observable<LoginWithOAuthResponse>;
   linkOAuthAccount(data: LinkOAuthAccountRequest): Observable<LoginResponse>;
+  switchOAuthProvider(
+    data: SwitchOAuthProviderRequest,
+  ): Observable<SwitchOAuthProviderResponse>;
 }

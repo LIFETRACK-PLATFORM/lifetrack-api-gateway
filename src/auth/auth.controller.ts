@@ -38,6 +38,8 @@ import {
 } from './constants/session-cookies';
 import {
   createOAuthPkceSession,
+  OAUTH_INTENT_COOKIE,
+  OAUTH_INTENT_SWITCH,
   OAUTH_PROVIDER_COOKIE,
   OAUTH_STATE_COOKIE,
   OAUTH_VERIFIER_COOKIE,
@@ -195,8 +197,12 @@ export class AuthController implements OnModuleInit {
 
   @Throttle(AUTH_THROTTLE)
   @Get('google')
-  startGoogleOAuth(@Res() res: Response) {
-    this.startOAuthFlow('GOOGLE', res, {
+  startGoogleOAuth(
+    @Query('intent') intent: string | undefined,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    this.startOAuthFlow('GOOGLE', intent, req, res, {
       authorizeUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
       clientId: envs.googleClientId,
       scope: 'openid email profile',
@@ -217,8 +223,12 @@ export class AuthController implements OnModuleInit {
 
   @Throttle(AUTH_THROTTLE)
   @Get('github')
-  startGitHubOAuth(@Res() res: Response) {
-    this.startOAuthFlow('GITHUB', res, {
+  startGitHubOAuth(
+    @Query('intent') intent: string | undefined,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    this.startOAuthFlow('GITHUB', intent, req, res, {
       authorizeUrl: 'https://github.com/login/oauth/authorize',
       clientId: envs.githubClientId,
       scope: 'user:email',
@@ -254,6 +264,8 @@ export class AuthController implements OnModuleInit {
 
   private startOAuthFlow(
     provider: string,
+    intent: string | undefined,
+    req: Request,
     res: Response,
     config: { authorizeUrl: string; clientId: string; scope: string },
   ) {
@@ -263,6 +275,14 @@ export class AuthController implements OnModuleInit {
     res.cookie(OAUTH_STATE_COOKIE, pkce.state, cookieOptions);
     res.cookie(OAUTH_VERIFIER_COOKIE, pkce.codeVerifier, cookieOptions);
     res.cookie(OAUTH_PROVIDER_COOKIE, provider, cookieOptions);
+
+    // "Cambiar proveedor" solo se activa si lo pide el caller Y hay una sesión
+    // activa — sin sesión, esto es un login normal aunque venga el query param.
+    const wantsSwitch = intent === 'switch';
+    const hasActiveSession = !!this.extractRefreshTokenFromCookie(req);
+    if (wantsSwitch && hasActiveSession) {
+      res.cookie(OAUTH_INTENT_COOKIE, OAUTH_INTENT_SWITCH, cookieOptions);
+    }
 
     const redirectUri = `${envs.oauthRedirectBaseUrl}/auth/${provider.toLowerCase()}/callback`;
     const params = new URLSearchParams({
@@ -293,6 +313,7 @@ export class AuthController implements OnModuleInit {
       res.clearCookie(OAUTH_STATE_COOKIE, cookieOptions);
       res.clearCookie(OAUTH_VERIFIER_COOKIE, cookieOptions);
       res.clearCookie(OAUTH_PROVIDER_COOKIE, cookieOptions);
+      res.clearCookie(OAUTH_INTENT_COOKIE, cookieOptions);
     };
 
     if (error || !code || !state) {
@@ -308,6 +329,7 @@ export class AuthController implements OnModuleInit {
     const storedProvider = req.cookies?.[OAUTH_PROVIDER_COOKIE] as
       | string
       | undefined;
+    const intent = req.cookies?.[OAUTH_INTENT_COOKIE] as string | undefined;
 
     if (
       !storedState ||
@@ -317,6 +339,20 @@ export class AuthController implements OnModuleInit {
     ) {
       clearOAuthCookies();
       res.redirect(`${frontendBase}/login?error=oauth_invalid_state`);
+      return;
+    }
+
+    if (intent === OAUTH_INTENT_SWITCH) {
+      const refreshToken = this.extractRefreshTokenFromCookie(req);
+      clearOAuthCookies();
+      await this.handleSwitchProviderCallback(
+        provider,
+        code,
+        codeVerifier,
+        refreshToken,
+        res,
+        frontendBase,
+      );
       return;
     }
 
@@ -333,6 +369,37 @@ export class AuthController implements OnModuleInit {
     } catch (err) {
       clearOAuthCookies();
       throw new RpcException(parseGrpcError(err));
+    }
+  }
+
+  private async handleSwitchProviderCallback(
+    provider: string,
+    code: string,
+    codeVerifier: string,
+    refreshToken: string,
+    res: Response,
+    frontendBase: string,
+  ) {
+    if (!refreshToken) {
+      res.redirect(`${frontendBase}/profile?providerSwitch=error`);
+      return;
+    }
+
+    try {
+      await firstValueFrom(
+        this.authService.switchOAuthProvider({
+          refreshToken,
+          provider,
+          code,
+          codeVerifier,
+        }),
+      );
+      res.redirect(`${frontendBase}/profile?providerSwitch=success`);
+    } catch (err) {
+      const parsed = parseGrpcError(err);
+      res.redirect(
+        `${frontendBase}/profile?providerSwitch=error&reason=${encodeURIComponent(parsed.message)}`,
+      );
     }
   }
 

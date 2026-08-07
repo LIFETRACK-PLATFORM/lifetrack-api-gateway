@@ -20,6 +20,8 @@ export function createOAuthPkceSession(): OAuthPkceSession {
 export const OAUTH_STATE_COOKIE = 'oauth_state';
 export const OAUTH_VERIFIER_COOKIE = 'oauth_code_verifier';
 export const OAUTH_PROVIDER_COOKIE = 'oauth_provider';
+export const OAUTH_INTENT_COOKIE = 'oauth_intent';
+export const OAUTH_INTENT_SWITCH = 'SWITCH';
 
 export function oauthSessionCookieOptions() {
   return {
