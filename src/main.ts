@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { envs } from './config/envs';
 import { Logger, ValidationPipe } from '@nestjs/common';
@@ -17,6 +18,23 @@ async function bootstrap() {
   // Sin esto, @nestjs/throttler usa req.ip como key y todos los usuarios comparten
   // el mismo contador de rate limit.
   app.set('trust proxy', 1);
+
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:'],
+          connectSrc: ["'self'"],
+          frameAncestors: ["'none'"],
+        },
+      },
+      hsts: { maxAge: 31_536_000, includeSubDomains: true },
+      frameguard: { action: 'deny' },
+    }),
+  );
 
   app.enableCors({
     origin: envs.corsOrigin,
