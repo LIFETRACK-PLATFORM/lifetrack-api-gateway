@@ -51,9 +51,14 @@ async function bootstrap() {
     }),
   );
 
+  // Nest invierte el orden de los global filters al resolverlos por request
+  // (RouterExceptionFilters.create hace filters.reverse() antes del .find()),
+  // así que el filtro catch-all (@Catch() sin args) tiene que registrarse
+  // PRIMERO para terminar último en la búsqueda — si no, gana siempre él y
+  // RpcCustomExceptionFilter nunca se ejecuta (todo cae como 500 genérico).
   app.useGlobalFilters(
-    new RpcCustomExceptionFilter(),
     new AllExceptionsFilter(),
+    new RpcCustomExceptionFilter(),
   );
 
   await app.listen(envs.port);
