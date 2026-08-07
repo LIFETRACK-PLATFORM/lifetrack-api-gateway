@@ -4,6 +4,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './auth/auth.module';
 import { RehabModule } from './rehab/rehab.module';
 import { FinanceModule } from './finance/finance.module';
+import { VaultModule } from './vault/vault.module';
 import { UsersModule } from './users/users.module';
 import { NatsModule } from './transports/nats.module';
 
@@ -32,6 +33,7 @@ import { NatsModule } from './transports/nats.module';
     UsersModule,
     RehabModule,
     FinanceModule,
+    VaultModule,
     NatsModule,
   ],
   providers: [

@@ -46,6 +46,16 @@ import { envs } from 'src/config/envs';
           loader: { arrays: true, defaults: true },
         },
       },
+      {
+        name: 'VAULT_SERVICE',
+        transport: Transport.GRPC,
+        options: {
+          package: 'lifetrack.vault',
+          protoPath: join(process.cwd(), 'src/proto/vault.proto'),
+          url: envs.vaultGrpcUrl,
+          loader: { arrays: true, defaults: true },
+        },
+      },
     ]),
   ],
   exports: [ClientsModule],
