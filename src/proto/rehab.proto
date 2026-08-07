@@ -5,6 +5,7 @@ package lifetrack.rehab;
 service RehabService {
   rpc CreateRecoveryPlan (CreateRecoveryPlanRequest) returns (RecoveryPlanResponse);
   rpc ListRecoveryPlansByUser (ListRecoveryPlansByUserRequest) returns (ListRecoveryPlansByUserResponse);
+  rpc UpdateRecoveryPlanStatus (UpdateRecoveryPlanStatusRequest) returns (UpdateRecoveryPlanStatusResponse);
   rpc AddExercise (AddExerciseRequest) returns (ExerciseResponse);
   rpc DeleteExercise (DeleteExerciseRequest) returns (DeleteExerciseResponse);
   rpc LogExercise (LogExerciseRequest) returns (ExerciseLogResponse);
@@ -47,6 +48,16 @@ message RecoveryPlanResponse {
   string injuryType = 4;
   string surgeryDate = 5;
   string status = 6;
+}
+
+message UpdateRecoveryPlanStatusRequest {
+  string recoveryPlanId = 1;
+  string status = 2;
+}
+
+message UpdateRecoveryPlanStatusResponse {
+  string recoveryPlanId = 1;
+  string status = 2;
 }
 
 message AddExerciseRequest {
