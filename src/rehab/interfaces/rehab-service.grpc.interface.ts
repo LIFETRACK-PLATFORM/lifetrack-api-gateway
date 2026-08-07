@@ -42,10 +42,12 @@ export interface RecoveryProgressResponse {
 
 export interface AddExerciseRequest {
   name: string;
+  metricType: 'REPS' | 'DURATION';
   targetSets: number;
   targetReps: number;
-  phase: number;
+  targetDurationMinutes?: number;
   referenceMediaUrl?: string;
+  notes?: string;
   daysOfWeek?: number[];
 }
 
@@ -53,9 +55,11 @@ export interface ExerciseResponse {
   exerciseId: string;
   recoveryPlanId: string;
   name: string;
+  metricType: 'REPS' | 'DURATION';
   targetSets: number;
   targetReps: number;
-  phase: number;
+  targetDurationMinutes?: number;
+  notes?: string;
   daysOfWeek: number[];
 }
 
@@ -76,6 +80,7 @@ export interface ExerciseLogResponse {
 export interface AppointmentResponse {
   appointmentId: string;
   recoveryPlanId: string;
+  title?: string;
   date: string;
   provider: string;
   notes?: string;
@@ -84,11 +89,21 @@ export interface AppointmentResponse {
 }
 
 export interface AddAppointmentRequest {
+  title?: string;
   date: string;
   provider: string;
   type: string;
   notes?: string;
   repeatWeeks?: number;
+}
+
+export interface UpdateAppointmentRequest {
+  appointmentId: string;
+  title?: string;
+  date: string;
+  provider: string;
+  type: string;
+  notes?: string;
 }
 
 export interface AddAppointmentResponse {
@@ -127,7 +142,6 @@ export interface TodayExerciseEntry {
   name: string;
   targetSets: number;
   targetReps: number;
-  phase: number;
   scheduledToday: boolean;
   completedToday: boolean;
   urgent: boolean;
@@ -249,9 +263,11 @@ export interface RehabServiceGrpc {
     data: {
       exerciseId: string;
       name: string;
+      metricType: 'REPS' | 'DURATION';
       targetSets: number;
       targetReps: number;
-      phase: number;
+      targetDurationMinutes?: number;
+      notes?: string;
       daysOfWeek?: number[];
     },
     metadata?: unknown,
@@ -264,6 +280,10 @@ export interface RehabServiceGrpc {
     data: MarkAppointmentAttendanceRequest,
     metadata?: unknown,
   ): Observable<MarkAppointmentAttendanceResponse>;
+  updateAppointment(
+    data: UpdateAppointmentRequest,
+    metadata?: unknown,
+  ): Observable<AppointmentResponse>;
   deleteAppointment(
     data: { appointmentId: string },
     metadata?: unknown,

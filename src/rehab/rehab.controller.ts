@@ -28,6 +28,7 @@ import {
   LogExerciseBodyDto,
   MarkAppointmentAttendanceBodyDto,
   MarkExerciseCompletionBodyDto,
+  UpdateAppointmentBodyDto,
   UpdateExerciseBodyDto,
   UpdateRecoveryPlanStatusBodyDto,
 } from './dto/rehab.dto';
@@ -211,6 +212,22 @@ export class RehabController implements OnModuleInit {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
       .markAppointmentAttendance({ appointmentId, ...body }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Patch('appointments/:id')
+  updateAppointment(
+    @Req() req: RequestWithUser,
+    @Param('id') appointmentId: string,
+    @Body() body: UpdateAppointmentBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .updateAppointment({ appointmentId, ...body }, metadata)
       .pipe(
         catchError((err) => {
           throw new RpcException(parseGrpcError(err));
