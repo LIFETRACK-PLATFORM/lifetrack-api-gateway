@@ -56,6 +56,32 @@ export class AddExerciseBodyDto {
   daysOfWeek?: number[];
 }
 
+export class UpdateExerciseBodyDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsInt()
+  @Min(1)
+  targetSets: number;
+
+  @IsInt()
+  @Min(1)
+  targetReps: number;
+
+  @IsInt()
+  @Min(1)
+  phase: number;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  @IsInt({ each: true })
+  @Min(0, { each: true })
+  @Max(6, { each: true })
+  daysOfWeek?: number[];
+}
+
 export class LogExerciseBodyDto {
   @IsInt()
   @Min(0)

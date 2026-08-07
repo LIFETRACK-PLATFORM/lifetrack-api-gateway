@@ -7,10 +7,12 @@ service RehabService {
   rpc ListRecoveryPlansByUser (ListRecoveryPlansByUserRequest) returns (ListRecoveryPlansByUserResponse);
   rpc UpdateRecoveryPlanStatus (UpdateRecoveryPlanStatusRequest) returns (UpdateRecoveryPlanStatusResponse);
   rpc AddExercise (AddExerciseRequest) returns (ExerciseResponse);
+  rpc UpdateExercise (UpdateExerciseRequest) returns (ExerciseResponse);
   rpc DeleteExercise (DeleteExerciseRequest) returns (DeleteExerciseResponse);
   rpc LogExercise (LogExerciseRequest) returns (ExerciseLogResponse);
   rpc AddAppointment (AddAppointmentRequest) returns (AddAppointmentResponse);
   rpc MarkAppointmentAttendance (MarkAppointmentAttendanceRequest) returns (MarkAppointmentAttendanceResponse);
+  rpc DeleteAppointment (DeleteAppointmentRequest) returns (DeleteAppointmentResponse);
   rpc AddMeasurement (AddMeasurementRequest) returns (MeasurementResponse);
   rpc AddProgressPhoto (AddProgressPhotoRequest) returns (ProgressPhotoResponse);
   rpc ListRecoveryProgress (ListRecoveryProgressRequest) returns (RecoveryProgressResponse);
@@ -81,6 +83,15 @@ message ExerciseResponse {
   repeated int32 daysOfWeek = 7;
 }
 
+message UpdateExerciseRequest {
+  string exerciseId = 1;
+  string name = 2;
+  int32 targetSets = 3;
+  int32 targetReps = 4;
+  int32 phase = 5;
+  repeated int32 daysOfWeek = 6;
+}
+
 message DeleteExerciseRequest {
   string exerciseId = 1;
 }
@@ -138,6 +149,16 @@ message MarkAppointmentAttendanceResponse {
   string appointmentId = 1;
   string recoveryPlanId = 2;
   bool attended = 3;
+}
+
+message DeleteAppointmentRequest {
+  string appointmentId = 1;
+}
+
+message DeleteAppointmentResponse {
+  string appointmentId = 1;
+  string recoveryPlanId = 2;
+  bool deleted = 3;
 }
 
 message AddMeasurementRequest {
