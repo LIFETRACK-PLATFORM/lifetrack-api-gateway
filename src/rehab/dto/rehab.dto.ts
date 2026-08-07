@@ -91,6 +91,11 @@ export class AddAppointmentBodyDto {
   repeatWeeks?: number;
 }
 
+export class MarkAppointmentAttendanceBodyDto {
+  @IsBoolean()
+  attended: boolean;
+}
+
 export class UpdateRecoveryPlanStatusBodyDto {
   @IsIn(['ACTIVE', 'COMPLETED', 'PAUSED'])
   status: 'ACTIVE' | 'COMPLETED' | 'PAUSED';
