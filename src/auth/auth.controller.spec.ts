@@ -5,6 +5,7 @@ import { RpcException } from '@nestjs/microservices';
 import type { Response } from 'express';
 import type { Request } from 'express';
 import { UserRole } from './interfaces/role.interface';
+import { cookieSecure } from './constants/session-cookies';
 
 const mockClientGrpc = {
   getService: jest.fn().mockReturnValue({
@@ -111,12 +112,20 @@ describe('AuthController', () => {
         expect(res.cookie).toHaveBeenCalledWith(
           'refreshToken',
           'refresh-token',
-          expect.objectContaining({ httpOnly: true, secure: true, path: '/' }),
+          expect.objectContaining({
+            httpOnly: true,
+            secure: cookieSecure(),
+            path: '/',
+          }),
         );
         expect(res.cookie).toHaveBeenCalledWith(
           'accessToken',
           'access-token',
-          expect.objectContaining({ httpOnly: true, secure: true, path: '/' }),
+          expect.objectContaining({
+            httpOnly: true,
+            secure: cookieSecure(),
+            path: '/',
+          }),
         );
         expect(result).not.toHaveProperty('refreshToken');
         expect(result).not.toHaveProperty('accessToken');
