@@ -368,7 +368,15 @@ export class AuthController implements OnModuleInit {
       this.handleOAuthResult(result, res, frontendBase);
     } catch (err) {
       clearOAuthCookies();
-      throw new RpcException(parseGrpcError(err));
+      // Esto es una navegación de nivel superior (redirect del proveedor OAuth),
+      // no un fetch/XHR: si se lanza la excepción tal cual, el navegador
+      // muestra el JSON crudo del error en vez de la pantalla de login. Se
+      // redirige con el mensaje real en vez de repetir ese problema (ya visto
+      // antes con los códigos 500/400 de este mismo flujo).
+      const parsed = parseGrpcError(err);
+      res.redirect(
+        `${frontendBase}/login?error=oauth_failed&reason=${encodeURIComponent(parsed.message)}`,
+      );
     }
   }
 
