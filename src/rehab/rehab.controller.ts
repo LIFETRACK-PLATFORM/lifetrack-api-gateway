@@ -74,10 +74,14 @@ export class RehabController implements OnModuleInit {
   }
 
   @Get('plans/:id/today')
-  getTodayExercises(@Req() req: RequestWithUser, @Param('id') id: string) {
+  getTodayExercises(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Query('todayIso') todayIso?: string,
+  ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
-      .getTodayExercises({ recoveryPlanId: id }, metadata)
+      .getTodayExercises({ recoveryPlanId: id, todayIso }, metadata)
       .pipe(
         catchError((err) => {
           throw new RpcException(parseGrpcError(err));
@@ -90,10 +94,14 @@ export class RehabController implements OnModuleInit {
     @Req() req: RequestWithUser,
     @Param('id') id: string,
     @Query('referenceDate') referenceDate?: string,
+    @Query('todayIso') todayIso?: string,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
-      .getWeeklySummary({ recoveryPlanId: id, referenceDate }, metadata)
+      .getWeeklySummary(
+        { recoveryPlanId: id, referenceDate, todayIso },
+        metadata,
+      )
       .pipe(
         catchError((err) => {
           throw new RpcException(parseGrpcError(err));

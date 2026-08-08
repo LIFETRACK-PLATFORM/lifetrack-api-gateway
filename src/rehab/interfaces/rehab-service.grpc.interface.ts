@@ -135,6 +135,7 @@ export interface MarkExerciseCompletionResponse {
 
 export interface GetTodayExercisesRequest {
   recoveryPlanId: string;
+  todayIso?: string;
 }
 
 export interface TodayExerciseEntry {
@@ -154,6 +155,7 @@ export interface GetTodayExercisesResponse {
 export interface GetWeeklySummaryRequest {
   recoveryPlanId: string;
   referenceDate?: string;
+  todayIso?: string;
 }
 
 export interface WeeklySummaryDay {
@@ -241,6 +243,7 @@ export interface SetAdHocProtocolDayRequest {
   recoveryPlanId: string;
   targetDate: string;
   sourceDate: string;
+  todayIso?: string;
 }
 
 export interface SetAdHocProtocolDayResponse {

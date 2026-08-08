@@ -254,4 +254,8 @@ export class SetAdHocProtocolDayBodyDto {
 
   @IsDateString()
   sourceDate: string;
+
+  @IsOptional()
+  @IsString()
+  todayIso?: string;
 }
