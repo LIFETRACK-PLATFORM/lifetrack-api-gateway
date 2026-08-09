@@ -54,18 +54,14 @@ pipeline {
 
     stage("Docker Build") {
       steps {
-        lock('docker-build') {
-          sh "docker build -t api-gateway:latest ."
-        }
+        sh "docker build -t api-gateway:latest ."
       }
     }
   }
 
   post {
     always {
-      lock('docker-build') {
-        sh 'docker image prune -f'
-      }
+      sh 'docker image prune -f'
     }
     success {
       echo "Pipeline OK - api-gateway #${env.BUILD_NUMBER}"
