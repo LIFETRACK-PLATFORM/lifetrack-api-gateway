@@ -10,7 +10,7 @@ pipeline {
   stages {
     stage("Docker Build") {
       steps {
-        sh "docker build -t ${IMAGE}:${env.BUILD_NUMBER} ."
+        sh "docker build -t ${IMAGE}:latest ."
       }
     }
 
@@ -18,7 +18,7 @@ pipeline {
       steps {
         withCredentials([usernamePassword(credentialsId: 'github-token-userpass', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
           sh "echo ${GH_TOKEN} | docker login ghcr.io -u ${GH_USER} --password-stdin"
-          sh "docker push ${IMAGE}:${env.BUILD_NUMBER}"
+          sh "docker push ${IMAGE}:latest"
         }
       }
     }
@@ -44,13 +44,14 @@ pipeline {
             ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS} '
               docker stop api-gateway || true
               docker rm api-gateway || true
-              docker pull ${IMAGE}:${env.BUILD_NUMBER}
+              docker pull ${IMAGE}:latest
               docker run -d --name api-gateway \
                 --network lifetrack-net \
                 --restart unless-stopped \
                 -p 127.0.0.1:3000:3000 \
                 --env-file /home/ricardo/lifetrack-infra/envs/api-gateway.env \
-                ${IMAGE}:${env.BUILD_NUMBER}
+                ${IMAGE}:latest
+              docker image prune -f
             '
           """
         }
@@ -59,6 +60,9 @@ pipeline {
   }
 
   post {
+    always {
+      sh 'docker image prune -f'
+    }
     success {
       echo "Deploy OK - api-gateway #${env.BUILD_NUMBER}"
     }
