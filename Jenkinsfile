@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  options {
+    disableConcurrentBuilds()
+  }
+
   tools {
     nodejs "NodeJS-20"
   }
@@ -50,18 +54,15 @@ pipeline {
 
     stage("Docker Build") {
       steps {
-        lock('docker-build') {
-          sh "docker build -t api-gateway:latest ."
-        }
+        sh "docker buildx build --builder lifetrack-builder -t api-gateway:latest --load ."
       }
     }
   }
 
   post {
     always {
-      lock('docker-build') {
-        sh 'docker image prune -f'
-      }
+      sh 'docker image prune -af || true'
+      sh 'docker buildx prune -af --builder lifetrack-builder || true'
     }
     success {
       echo "Pipeline OK - api-gateway #${env.BUILD_NUMBER}"
