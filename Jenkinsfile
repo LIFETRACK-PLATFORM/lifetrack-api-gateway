@@ -50,12 +50,15 @@ pipeline {
 
     stage("Docker Build") {
       steps {
-        sh "docker build -t api-gateway:${env.BUILD_NUMBER} ."
+        sh "docker build -t api-gateway:latest ."
       }
     }
   }
 
   post {
+    always {
+      sh 'docker image prune -f'
+    }
     success {
       echo "Pipeline OK - api-gateway #${env.BUILD_NUMBER}"
       githubNotify credentialsId: 'github-token-userpass', account: 'LIFETRACK-PLATFORM', repo: 'lifetrack-api-gateway', sha: env.GIT_COMMIT, status: 'SUCCESS', context: 'jenkins-ci', description: 'CI passed'

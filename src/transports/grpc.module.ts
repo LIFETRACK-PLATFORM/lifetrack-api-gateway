@@ -4,7 +4,11 @@ import { dirname, join } from 'path';
 import { envs } from 'src/config/envs';
 
 const contractsProtoPath = (file: string) =>
-  join(dirname(require.resolve('@lifetrack/contracts/package.json')), 'proto', file);
+  join(
+    dirname(require.resolve('@lifetrack/contracts/package.json')),
+    'proto',
+    file,
+  );
 
 @Module({
   imports: [
