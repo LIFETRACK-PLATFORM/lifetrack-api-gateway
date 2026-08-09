@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { join } from 'path';
+import { dirname, join } from 'path';
 import { envs } from 'src/config/envs';
+
+const contractsProtoPath = (file: string) =>
+  join(dirname(require.resolve('@lifetrack/contracts/package.json')), 'proto', file);
 
 @Module({
   imports: [
@@ -11,7 +14,7 @@ import { envs } from 'src/config/envs';
         transport: Transport.GRPC,
         options: {
           package: 'lifetrack.auth',
-          protoPath: join(process.cwd(), 'src/proto/auth.proto'),
+          protoPath: contractsProtoPath('auth.proto'),
           url: envs.authGrpcUrl,
           loader: { arrays: true, defaults: true },
         },
@@ -21,7 +24,7 @@ import { envs } from 'src/config/envs';
         transport: Transport.GRPC,
         options: {
           package: 'lifetrack.user',
-          protoPath: join(process.cwd(), 'src/proto/user.proto'),
+          protoPath: contractsProtoPath('user.proto'),
           url: envs.userGrpcUrl,
           loader: { arrays: true, defaults: true },
         },
@@ -31,7 +34,7 @@ import { envs } from 'src/config/envs';
         transport: Transport.GRPC,
         options: {
           package: 'lifetrack.rehab',
-          protoPath: join(process.cwd(), 'src/proto/rehab.proto'),
+          protoPath: contractsProtoPath('rehab.proto'),
           url: envs.rehabGrpcUrl,
           loader: { arrays: true, defaults: true },
         },
@@ -41,7 +44,7 @@ import { envs } from 'src/config/envs';
         transport: Transport.GRPC,
         options: {
           package: 'lifetrack.finance',
-          protoPath: join(process.cwd(), 'src/proto/finance.proto'),
+          protoPath: contractsProtoPath('finance.proto'),
           url: envs.financeGrpcUrl,
           loader: { arrays: true, defaults: true },
         },
@@ -51,7 +54,7 @@ import { envs } from 'src/config/envs';
         transport: Transport.GRPC,
         options: {
           package: 'lifetrack.vault',
-          protoPath: join(process.cwd(), 'src/proto/vault.proto'),
+          protoPath: contractsProtoPath('vault.proto'),
           url: envs.vaultGrpcUrl,
           loader: { arrays: true, defaults: true },
         },
