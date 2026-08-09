@@ -15,8 +15,8 @@ importers:
         specifier: ^0.8.1
         version: 0.8.1
       '@lifetrack/contracts':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.1.1
+        version: 0.1.1
       '@nestjs/common':
         specifier: ^11.0.1
         version: 11.1.27(class-transformer@0.5.1)(class-validator@0.15.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -703,8 +703,8 @@ packages:
   '@js-sdsl/ordered-map@4.4.2':
     resolution: {integrity: sha512-iUKgm52T8HOE/makSxjqoWhe95ZJA1/G1sYsGev2JDKUSS14KAgg1LHb+Ba+IPow0xflbnSkOsZcO08C7w1gYw==}
 
-  '@lifetrack/contracts@0.1.0':
-    resolution: {integrity: sha512-WICKsql/nJykedO5c5xfLktzlH84zlt66AzORSEJvY/gsmX4vdjRiuu4vpL6K49fTuLEsjb/1Kkv5u2ICkQ4cQ==}
+  '@lifetrack/contracts@0.1.1':
+    resolution: {integrity: sha512-nLc2ab6tZDh+3sBgIWLer6a0en1Xglb0i3Fmoz/kHQ1yiKHDwKELrae++zb0vF/q+vYJbRsSkLNJHereC1jXvg==}
 
   '@lukeed/csprng@1.1.0':
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
@@ -3954,7 +3954,7 @@ snapshots:
 
   '@js-sdsl/ordered-map@4.4.2': {}
 
-  '@lifetrack/contracts@0.1.0': {}
+  '@lifetrack/contracts@0.1.1': {}
 
   '@lukeed/csprng@1.1.0': {}
 

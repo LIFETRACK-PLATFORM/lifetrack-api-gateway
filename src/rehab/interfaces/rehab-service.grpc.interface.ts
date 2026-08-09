@@ -86,6 +86,7 @@ export interface AppointmentResponse {
   notes?: string;
   type: string;
   attended?: boolean;
+  rescheduledFromDate?: string;
 }
 
 export interface AddAppointmentRequest {
