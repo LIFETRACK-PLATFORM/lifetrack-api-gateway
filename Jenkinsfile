@@ -54,14 +54,15 @@ pipeline {
 
     stage("Docker Build") {
       steps {
-        sh "docker build -t api-gateway:latest ."
+        sh "docker buildx build --builder lifetrack-builder -t api-gateway:latest --load ."
       }
     }
   }
 
   post {
     always {
-      sh 'docker image prune -f'
+      sh 'docker image prune -af'
+      sh 'docker buildx prune -af --builder lifetrack-builder'
     }
     success {
       echo "Pipeline OK - api-gateway #${env.BUILD_NUMBER}"
