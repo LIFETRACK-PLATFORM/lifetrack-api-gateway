@@ -155,6 +155,18 @@ export class RehabController implements OnModuleInit {
       );
   }
 
+  @Delete('plans/:id')
+  deletePlan(@Req() req: RequestWithUser, @Param('id') id: string) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.rehabService
+      .deleteRecoveryPlan({ recoveryPlanId: id }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
   @Post('plans/:id/exercises')
   addExercise(
     @Req() req: RequestWithUser,

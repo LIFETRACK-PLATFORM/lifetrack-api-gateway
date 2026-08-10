@@ -1,0 +1,16 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN corepack enable
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
+
+RUN echo "node-linker=hoisted" > .npmrc && echo "shamefully-hoist=true" >> .npmrc
+RUN pnpm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["pnpm", "run", "start:dev"]
