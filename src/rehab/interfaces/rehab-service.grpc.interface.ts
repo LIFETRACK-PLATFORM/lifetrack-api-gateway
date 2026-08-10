@@ -273,6 +273,15 @@ export interface UpdateRecoveryPlanStatusResponse {
   status: string;
 }
 
+export interface DeleteRecoveryPlanRequest {
+  recoveryPlanId: string;
+}
+
+export interface DeleteRecoveryPlanResponse {
+  recoveryPlanId: string;
+  deleted: boolean;
+}
+
 export interface RehabServiceGrpc {
   listRecoveryPlansByUser(
     data: Record<string, never>,
@@ -282,6 +291,10 @@ export interface RehabServiceGrpc {
     data: UpdateRecoveryPlanStatusRequest,
     metadata?: unknown,
   ): Observable<UpdateRecoveryPlanStatusResponse>;
+  deleteRecoveryPlan(
+    data: DeleteRecoveryPlanRequest,
+    metadata?: unknown,
+  ): Observable<DeleteRecoveryPlanResponse>;
   createRecoveryPlan(
     data: CreateRecoveryPlanRequest & { userId?: string },
     metadata?: unknown,
