@@ -5,6 +5,7 @@ import {
   Inject,
   OnModuleInit,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Delete,
@@ -25,6 +26,9 @@ import {
   AddMeasurementBodyDto,
   AddPainLogBodyDto,
   CreateRecoveryPlanBodyDto,
+  GetTodayExercisesQueryDto,
+  GetWeeklySummaryQueryDto,
+  ListPainLogsQueryDto,
   LogExerciseBodyDto,
   MarkAppointmentAttendanceBodyDto,
   MarkExerciseCompletionBodyDto,
@@ -62,7 +66,10 @@ export class RehabController implements OnModuleInit {
   }
 
   @Get('plans/:id/progress')
-  getPlanProgress(@Req() req: RequestWithUser, @Param('id') id: string) {
+  getPlanProgress(
+    @Req() req: RequestWithUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
       .listRecoveryProgress({ recoveryPlanId: id }, metadata)
@@ -76,12 +83,15 @@ export class RehabController implements OnModuleInit {
   @Get('plans/:id/today')
   getTodayExercises(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
-    @Query('todayIso') todayIso?: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: GetTodayExercisesQueryDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
-      .getTodayExercises({ recoveryPlanId: id, todayIso }, metadata)
+      .getTodayExercises(
+        { recoveryPlanId: id, todayIso: query.todayIso },
+        metadata,
+      )
       .pipe(
         catchError((err) => {
           throw new RpcException(parseGrpcError(err));
@@ -92,14 +102,17 @@ export class RehabController implements OnModuleInit {
   @Get('plans/:id/weekly-summary')
   getWeeklySummary(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
-    @Query('referenceDate') referenceDate?: string,
-    @Query('todayIso') todayIso?: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: GetWeeklySummaryQueryDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
       .getWeeklySummary(
-        { recoveryPlanId: id, referenceDate, todayIso },
+        {
+          recoveryPlanId: id,
+          referenceDate: query.referenceDate,
+          todayIso: query.todayIso,
+        },
         metadata,
       )
       .pipe(
@@ -112,13 +125,15 @@ export class RehabController implements OnModuleInit {
   @Get('plans/:id/pain-logs')
   listPainLogs(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
-    @Query('from') from: string,
-    @Query('to') to: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: ListPainLogsQueryDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
-      .listPainLogs({ recoveryPlanId: id, from, to }, metadata)
+      .listPainLogs(
+        { recoveryPlanId: id, from: query.from, to: query.to },
+        metadata,
+      )
       .pipe(
         catchError((err) => {
           throw new RpcException(parseGrpcError(err));
@@ -142,7 +157,7 @@ export class RehabController implements OnModuleInit {
   @Patch('plans/:id/status')
   updatePlanStatus(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() body: UpdateRecoveryPlanStatusBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -156,7 +171,10 @@ export class RehabController implements OnModuleInit {
   }
 
   @Delete('plans/:id')
-  deletePlan(@Req() req: RequestWithUser, @Param('id') id: string) {
+  deletePlan(
+    @Req() req: RequestWithUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
       .deleteRecoveryPlan({ recoveryPlanId: id }, metadata)
@@ -170,7 +188,7 @@ export class RehabController implements OnModuleInit {
   @Post('plans/:id/exercises')
   addExercise(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() body: AddExerciseBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -184,7 +202,10 @@ export class RehabController implements OnModuleInit {
   }
 
   @Delete('exercises/:id')
-  deleteExercise(@Req() req: RequestWithUser, @Param('id') exerciseId: string) {
+  deleteExercise(
+    @Req() req: RequestWithUser,
+    @Param('id', ParseUUIDPipe) exerciseId: string,
+  ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService.deleteExercise({ exerciseId }, metadata).pipe(
       catchError((err) => {
@@ -196,7 +217,7 @@ export class RehabController implements OnModuleInit {
   @Patch('exercises/:id')
   updateExercise(
     @Req() req: RequestWithUser,
-    @Param('id') exerciseId: string,
+    @Param('id', ParseUUIDPipe) exerciseId: string,
     @Body() body: UpdateExerciseBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -212,7 +233,7 @@ export class RehabController implements OnModuleInit {
   @Post('plans/:id/appointments')
   addAppointment(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() body: AddAppointmentBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -228,7 +249,7 @@ export class RehabController implements OnModuleInit {
   @Patch('appointments/:id/attendance')
   markAppointmentAttendance(
     @Req() req: RequestWithUser,
-    @Param('id') appointmentId: string,
+    @Param('id', ParseUUIDPipe) appointmentId: string,
     @Body() body: MarkAppointmentAttendanceBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -244,7 +265,7 @@ export class RehabController implements OnModuleInit {
   @Patch('appointments/:id')
   updateAppointment(
     @Req() req: RequestWithUser,
-    @Param('id') appointmentId: string,
+    @Param('id', ParseUUIDPipe) appointmentId: string,
     @Body() body: UpdateAppointmentBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -260,7 +281,7 @@ export class RehabController implements OnModuleInit {
   @Delete('appointments/:id')
   deleteAppointment(
     @Req() req: RequestWithUser,
-    @Param('id') appointmentId: string,
+    @Param('id', ParseUUIDPipe) appointmentId: string,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
@@ -275,7 +296,7 @@ export class RehabController implements OnModuleInit {
   @Post('plans/:id/pain-logs')
   addPainLog(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() body: AddPainLogBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -291,7 +312,7 @@ export class RehabController implements OnModuleInit {
   @Post('plans/:id/measurements')
   addMeasurement(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() body: AddMeasurementBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -307,7 +328,7 @@ export class RehabController implements OnModuleInit {
   @Patch('measurements/:id')
   updateMeasurement(
     @Req() req: RequestWithUser,
-    @Param('id') measurementId: string,
+    @Param('id', ParseUUIDPipe) measurementId: string,
     @Body() body: UpdateMeasurementBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -323,7 +344,7 @@ export class RehabController implements OnModuleInit {
   @Delete('measurements/:id')
   deleteMeasurement(
     @Req() req: RequestWithUser,
-    @Param('id') measurementId: string,
+    @Param('id', ParseUUIDPipe) measurementId: string,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.rehabService
@@ -338,7 +359,7 @@ export class RehabController implements OnModuleInit {
   @Post('exercises/:id/logs')
   logExercise(
     @Req() req: RequestWithUser,
-    @Param('id') exerciseId: string,
+    @Param('id', ParseUUIDPipe) exerciseId: string,
     @Body() body: LogExerciseBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -354,7 +375,7 @@ export class RehabController implements OnModuleInit {
   @Post('exercises/:id/completions')
   markExerciseCompletion(
     @Req() req: RequestWithUser,
-    @Param('id') exerciseId: string,
+    @Param('id', ParseUUIDPipe) exerciseId: string,
     @Body() body: MarkExerciseCompletionBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -370,7 +391,7 @@ export class RehabController implements OnModuleInit {
   @Post('plans/:id/ad-hoc-protocol')
   setAdHocProtocolDay(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() body: SetAdHocProtocolDayBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -386,7 +407,7 @@ export class RehabController implements OnModuleInit {
   @Delete('plans/:id/ad-hoc-protocol/:date')
   clearAdHocProtocolDay(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Param('date') date: string,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
