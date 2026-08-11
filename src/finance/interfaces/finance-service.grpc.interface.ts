@@ -224,6 +224,113 @@ export interface ProcessRecurringItemsResponse {
   generatedTransactions: TransactionResponse[];
 }
 
+export interface RecurringCandidateResponse {
+  accountId: string;
+  categoryId: string;
+  amount: number;
+  kind: string;
+  dayOfMonth: number;
+  occurrences: number;
+  suggestedName: string;
+  lastOccurredAt: string;
+}
+
+export interface DetectRecurringCandidatesResponse {
+  candidates: RecurringCandidateResponse[];
+}
+
+export interface DebtResponse {
+  debtId: string;
+  userId: string;
+  name: string;
+  lender?: string;
+  type: string;
+  currency: string;
+  totalOwed: number;
+  originalAmount?: number;
+  minimumPayment?: number;
+  dueDay?: number;
+  accountId?: string;
+  categoryId: string;
+  status: string;
+  lastPaymentMonth?: number;
+  lastPaymentYear?: number;
+}
+
+export interface CreateDebtRequest {
+  name: string;
+  lender?: string;
+  type: string;
+  currency: string;
+  totalOwed: number;
+  originalAmount?: number;
+  minimumPayment?: number;
+  dueDay?: number;
+  accountId?: string;
+  categoryId: string;
+}
+
+export interface UpdateDebtRequest {
+  debtId: string;
+  name: string;
+  lender?: string;
+  type: string;
+  currency: string;
+  originalAmount?: number;
+  minimumPayment?: number;
+  dueDay?: number;
+  accountId?: string;
+  categoryId: string;
+}
+
+export interface DeleteDebtResponse {
+  deleted: boolean;
+  archived: boolean;
+}
+
+export interface ListDebtsResponse {
+  debts: DebtResponse[];
+}
+
+export interface RegisterDebtPaymentRequest {
+  debtId: string;
+  accountId: string;
+  amount: number;
+  description?: string;
+  occurredAt: string;
+}
+
+export interface RegisterDebtPaymentResponse {
+  transactionId: string;
+  debtId: string;
+  amount: number;
+  totalOwedAfter: number;
+  statusAfter: string;
+  accountBalanceAfter: number;
+  occurredAt: string;
+}
+
+export interface AdjustDebtBalanceRequest {
+  debtId: string;
+  newTotalOwed: number;
+}
+
+export interface GetDebtsSummaryRequest {
+  periodMonth: number;
+  periodYear: number;
+}
+
+export interface DebtCurrencySummary {
+  currency: string;
+  totalOwed: number;
+  totalDueThisPeriod: number;
+  activeCount: number;
+}
+
+export interface GetDebtsSummaryResponse {
+  summaries: DebtCurrencySummary[];
+}
+
 export interface FinanceServiceGrpc {
   createAccount(
     data: CreateAccountRequest,
@@ -317,4 +424,36 @@ export interface FinanceServiceGrpc {
     data: Record<string, never>,
     metadata?: unknown,
   ): Observable<ProcessRecurringItemsResponse>;
+  detectRecurringCandidates(
+    data: Record<string, never>,
+    metadata?: unknown,
+  ): Observable<DetectRecurringCandidatesResponse>;
+  createDebt(
+    data: CreateDebtRequest,
+    metadata?: unknown,
+  ): Observable<DebtResponse>;
+  updateDebt(
+    data: UpdateDebtRequest,
+    metadata?: unknown,
+  ): Observable<DebtResponse>;
+  deleteDebt(
+    data: { debtId: string },
+    metadata?: unknown,
+  ): Observable<DeleteDebtResponse>;
+  listDebts(
+    data: Record<string, never>,
+    metadata?: unknown,
+  ): Observable<ListDebtsResponse>;
+  registerDebtPayment(
+    data: RegisterDebtPaymentRequest,
+    metadata?: unknown,
+  ): Observable<RegisterDebtPaymentResponse>;
+  adjustDebtBalance(
+    data: AdjustDebtBalanceRequest,
+    metadata?: unknown,
+  ): Observable<DebtResponse>;
+  getDebtsSummary(
+    data: GetDebtsSummaryRequest,
+    metadata?: unknown,
+  ): Observable<GetDebtsSummaryResponse>;
 }

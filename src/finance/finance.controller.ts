@@ -5,6 +5,7 @@ import {
   Inject,
   OnModuleInit,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Delete,
@@ -20,14 +21,18 @@ import { SessionOrBearerGuard } from 'src/auth/guards/session-or-bearer.guard';
 import type { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 import { parseGrpcError } from 'src/common/helpers/parse-grpc-error';
 import {
+  AdjustDebtBalanceBodyDto,
   CreateAccountBodyDto,
   CreateBudgetBodyDto,
   CreateCategoryBodyDto,
+  CreateDebtBodyDto,
   CreateRecurringItemBodyDto,
   CreateTransactionBodyDto,
+  RegisterDebtPaymentBodyDto,
   UpdateAccountBodyDto,
   UpdateBudgetBodyDto,
   UpdateCategoryBodyDto,
+  UpdateDebtBodyDto,
   UpdateRecurringItemBodyDto,
   UpdateTransactionBodyDto,
 } from './dto/finance.dto';
@@ -74,7 +79,7 @@ export class FinanceController implements OnModuleInit {
   @Put('accounts/:id')
   updateAccount(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateAccountBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -88,7 +93,7 @@ export class FinanceController implements OnModuleInit {
   }
 
   @Delete('accounts/:id')
-  deleteAccount(@Req() req: RequestWithUser, @Param('id') id: string) {
+  deleteAccount(@Req() req: RequestWithUser, @Param('id', ParseUUIDPipe) id: string) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.financeService.deleteAccount({ accountId: id }, metadata).pipe(
       catchError((err) => {
@@ -123,7 +128,7 @@ export class FinanceController implements OnModuleInit {
   @Put('categories/:id')
   updateCategory(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateCategoryBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -137,7 +142,7 @@ export class FinanceController implements OnModuleInit {
   }
 
   @Delete('categories/:id')
-  deleteCategory(@Req() req: RequestWithUser, @Param('id') id: string) {
+  deleteCategory(@Req() req: RequestWithUser, @Param('id', ParseUUIDPipe) id: string) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.financeService
       .deleteCategory({ categoryId: id }, metadata)
@@ -164,7 +169,7 @@ export class FinanceController implements OnModuleInit {
   @Put('transactions/:id')
   updateTransaction(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTransactionBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -178,7 +183,7 @@ export class FinanceController implements OnModuleInit {
   }
 
   @Delete('transactions/:id')
-  deleteTransaction(@Req() req: RequestWithUser, @Param('id') id: string) {
+  deleteTransaction(@Req() req: RequestWithUser, @Param('id', ParseUUIDPipe) id: string) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.financeService
       .deleteTransaction({ transactionId: id }, metadata)
@@ -220,7 +225,7 @@ export class FinanceController implements OnModuleInit {
   @Put('budgets/:id')
   updateBudget(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateBudgetBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -234,7 +239,7 @@ export class FinanceController implements OnModuleInit {
   }
 
   @Delete('budgets/:id')
-  deleteBudget(@Req() req: RequestWithUser, @Param('id') id: string) {
+  deleteBudget(@Req() req: RequestWithUser, @Param('id', ParseUUIDPipe) id: string) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.financeService.deleteBudget({ budgetId: id }, metadata).pipe(
       catchError((err) => {
@@ -328,10 +333,20 @@ export class FinanceController implements OnModuleInit {
     );
   }
 
+  @Get('recurring-items/detect')
+  detectRecurringCandidates(@Req() req: RequestWithUser) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService.detectRecurringCandidates({}, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
+  }
+
   @Put('recurring-items/:id')
   updateRecurringItem(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateRecurringItemBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -345,7 +360,7 @@ export class FinanceController implements OnModuleInit {
   }
 
   @Delete('recurring-items/:id')
-  deleteRecurringItem(@Req() req: RequestWithUser, @Param('id') id: string) {
+  deleteRecurringItem(@Req() req: RequestWithUser, @Param('id', ParseUUIDPipe) id: string) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.financeService
       .deleteRecurringItem({ recurringItemId: id }, metadata)
@@ -364,5 +379,102 @@ export class FinanceController implements OnModuleInit {
         throw new RpcException(parseGrpcError(err));
       }),
     );
+  }
+
+  @Post('debts')
+  createDebt(@Req() req: RequestWithUser, @Body() dto: CreateDebtBodyDto) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService.createDebt(dto, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
+  }
+
+  @Get('debts')
+  listDebts(@Req() req: RequestWithUser) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService.listDebts({}, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
+  }
+
+  @Get('debts/summary')
+  getDebtsSummary(
+    @Req() req: RequestWithUser,
+    @Query('month') month: string,
+    @Query('year') year: string,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .getDebtsSummary(
+        { periodMonth: Number(month), periodYear: Number(year) },
+        metadata,
+      )
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Put('debts/:id')
+  updateDebt(
+    @Req() req: RequestWithUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateDebtBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .updateDebt({ debtId: id, ...dto }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Delete('debts/:id')
+  deleteDebt(@Req() req: RequestWithUser, @Param('id', ParseUUIDPipe) id: string) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService.deleteDebt({ debtId: id }, metadata).pipe(
+      catchError((err) => {
+        throw new RpcException(parseGrpcError(err));
+      }),
+    );
+  }
+
+  @Post('debts/:id/payments')
+  registerDebtPayment(
+    @Req() req: RequestWithUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: RegisterDebtPaymentBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .registerDebtPayment({ debtId: id, ...dto }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
+  }
+
+  @Put('debts/:id/balance')
+  adjustDebtBalance(
+    @Req() req: RequestWithUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: AdjustDebtBalanceBodyDto,
+  ) {
+    const metadata = buildUserMetadata(req.user.userId);
+    return this.financeService
+      .adjustDebtBalance({ debtId: id, ...dto }, metadata)
+      .pipe(
+        catchError((err) => {
+          throw new RpcException(parseGrpcError(err));
+        }),
+      );
   }
 }

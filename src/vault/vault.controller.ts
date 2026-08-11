@@ -6,6 +6,7 @@ import {
   Inject,
   OnModuleInit,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Req,
@@ -70,7 +71,10 @@ export class VaultController implements OnModuleInit {
   }
 
   @Get('items/:id')
-  getEncryptedItem(@Req() req: RequestWithUser, @Param('id') id: string) {
+  getEncryptedItem(
+    @Req() req: RequestWithUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.vaultService
       .getEncryptedVaultItem({ vaultItemId: id }, metadata)
@@ -84,7 +88,7 @@ export class VaultController implements OnModuleInit {
   @Put('items/:id')
   updateItem(
     @Req() req: RequestWithUser,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateVaultItemBodyDto,
   ) {
     const metadata = buildUserMetadata(req.user.userId);
@@ -98,7 +102,10 @@ export class VaultController implements OnModuleInit {
   }
 
   @Delete('items/:id')
-  deleteItem(@Req() req: RequestWithUser, @Param('id') id: string) {
+  deleteItem(
+    @Req() req: RequestWithUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const metadata = buildUserMetadata(req.user.userId);
     return this.vaultService
       .deleteVaultItem({ vaultItemId: id }, metadata)

@@ -12,6 +12,7 @@ import {
   IsString,
   Max,
   Min,
+  MinLength,
   ValidateIf,
 } from 'class-validator';
 
@@ -31,10 +32,12 @@ type MeasurementTypeValue = (typeof MEASUREMENT_TYPES)[number];
 export class CreateRecoveryPlanBodyDto {
   @IsString()
   @IsNotEmpty()
+  @MinLength(2)
   bodyPart: string;
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(2)
   injuryType: string;
 
   @IsDateString()
@@ -44,6 +47,7 @@ export class CreateRecoveryPlanBodyDto {
 export class AddExerciseBodyDto {
   @IsString()
   @IsNotEmpty()
+  @MinLength(2)
   name: string;
 
   @IsIn(['REPS', 'DURATION'])
@@ -82,6 +86,7 @@ export class AddExerciseBodyDto {
 export class UpdateExerciseBodyDto {
   @IsString()
   @IsNotEmpty()
+  @MinLength(2)
   name: string;
 
   @IsIn(['REPS', 'DURATION'])
@@ -99,6 +104,10 @@ export class UpdateExerciseBodyDto {
   @IsInt()
   @Min(1)
   targetDurationMinutes?: number;
+
+  @IsOptional()
+  @IsString()
+  referenceMediaUrl?: string;
 
   @IsOptional()
   @IsString()
@@ -129,7 +138,7 @@ export class LogExerciseBodyDto {
 export class AddAppointmentBodyDto {
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
+  @MinLength(2)
   title?: string;
 
   @IsDateString()
@@ -137,6 +146,7 @@ export class AddAppointmentBodyDto {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(2)
   provider: string;
 
   @IsIn(['THERAPY', 'MEDICAL'])
@@ -156,7 +166,7 @@ export class AddAppointmentBodyDto {
 export class UpdateAppointmentBodyDto {
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
+  @MinLength(2)
   title?: string;
 
   @IsDateString()
@@ -164,6 +174,7 @@ export class UpdateAppointmentBodyDto {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(2)
   provider: string;
 
   @IsIn(['THERAPY', 'MEDICAL'])
@@ -259,3 +270,28 @@ export class SetAdHocProtocolDayBodyDto {
   @IsString()
   todayIso?: string;
 }
+
+export class GetTodayExercisesQueryDto {
+  @IsOptional()
+  @IsDateString()
+  todayIso?: string;
+}
+
+export class GetWeeklySummaryQueryDto {
+  @IsOptional()
+  @IsDateString()
+  referenceDate?: string;
+
+  @IsOptional()
+  @IsDateString()
+  todayIso?: string;
+}
+
+export class ListPainLogsQueryDto {
+  @IsDateString()
+  from: string;
+
+  @IsDateString()
+  to: string;
+}
+
