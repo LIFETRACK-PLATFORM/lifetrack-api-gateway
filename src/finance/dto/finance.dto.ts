@@ -191,3 +191,106 @@ export class UpdateRecurringItemBodyDto {
   @IsBoolean()
   active: boolean;
 }
+
+export class CreateDebtBodyDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  lender?: string;
+
+  @IsIn(['CREDIT_CARD', 'LOAN', 'OTHER'])
+  type: 'CREDIT_CARD' | 'LOAN' | 'OTHER';
+
+  @IsString()
+  @IsNotEmpty()
+  currency: string;
+
+  @IsPositive()
+  totalOwed: number;
+
+  @IsOptional()
+  @IsPositive()
+  originalAmount?: number;
+
+  @IsOptional()
+  @IsPositive()
+  minimumPayment?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(31)
+  dueDay?: number;
+
+  @IsOptional()
+  @IsString()
+  accountId?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  categoryId: string;
+}
+
+export class UpdateDebtBodyDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  lender?: string;
+
+  @IsIn(['CREDIT_CARD', 'LOAN', 'OTHER'])
+  type: 'CREDIT_CARD' | 'LOAN' | 'OTHER';
+
+  @IsString()
+  @IsNotEmpty()
+  currency: string;
+
+  @IsOptional()
+  @IsPositive()
+  originalAmount?: number;
+
+  @IsOptional()
+  @IsPositive()
+  minimumPayment?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(31)
+  dueDay?: number;
+
+  @IsOptional()
+  @IsString()
+  accountId?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  categoryId: string;
+}
+
+export class RegisterDebtPaymentBodyDto {
+  @IsString()
+  @IsNotEmpty()
+  accountId: string;
+
+  @IsPositive()
+  amount: number;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsDateString()
+  occurredAt: string;
+}
+
+export class AdjustDebtBalanceBodyDto {
+  @IsNumber()
+  @Min(0)
+  newTotalOwed: number;
+}
