@@ -157,6 +157,10 @@ export class AddAppointmentBodyDto {
   notes?: string;
 
   @IsOptional()
+  @IsString()
+  location?: string;
+
+  @IsOptional()
   @IsInt()
   @Min(0)
   @Max(12)
@@ -183,6 +187,10 @@ export class UpdateAppointmentBodyDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @IsOptional()
+  @IsString()
+  location?: string;
 }
 
 export class MarkAppointmentAttendanceBodyDto {
