@@ -84,6 +84,7 @@ export interface AppointmentResponse {
   date: string;
   provider: string;
   notes?: string;
+  location?: string;
   type: string;
   attended?: boolean;
   rescheduledFromDate?: string;
@@ -95,6 +96,7 @@ export interface AddAppointmentRequest {
   provider: string;
   type: string;
   notes?: string;
+  location?: string;
   repeatWeeks?: number;
 }
 
@@ -105,6 +107,7 @@ export interface UpdateAppointmentRequest {
   provider: string;
   type: string;
   notes?: string;
+  location?: string;
 }
 
 export interface AddAppointmentResponse {
