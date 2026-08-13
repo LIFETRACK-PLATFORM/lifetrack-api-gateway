@@ -250,6 +250,10 @@ export interface DebtResponse {
   originalAmount?: number;
   minimumPayment?: number;
   dueDay?: number;
+  installmentCount?: number;
+  startingInstallment?: number;
+  currentInstallment?: number;
+  totalInterestPaid?: number;
   accountId?: string;
   categoryId: string;
   status: string;
@@ -266,6 +270,8 @@ export interface CreateDebtRequest {
   originalAmount?: number;
   minimumPayment?: number;
   dueDay?: number;
+  installmentCount?: number;
+  startingInstallment?: number;
   accountId?: string;
   categoryId: string;
 }
@@ -279,6 +285,8 @@ export interface UpdateDebtRequest {
   originalAmount?: number;
   minimumPayment?: number;
   dueDay?: number;
+  installmentCount?: number;
+  startingInstallment?: number;
   accountId?: string;
   categoryId: string;
 }
@@ -298,6 +306,7 @@ export interface RegisterDebtPaymentRequest {
   amount: number;
   description?: string;
   occurredAt: string;
+  interestAmount?: number;
 }
 
 export interface RegisterDebtPaymentResponse {

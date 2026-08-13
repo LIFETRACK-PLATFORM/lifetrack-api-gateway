@@ -226,6 +226,16 @@ export class CreateDebtBodyDto {
   dueDay?: number;
 
   @IsOptional()
+  @IsInt()
+  @Min(1)
+  installmentCount?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  startingInstallment?: number;
+
+  @IsOptional()
   @IsString()
   accountId?: string;
 
@@ -265,6 +275,16 @@ export class UpdateDebtBodyDto {
   dueDay?: number;
 
   @IsOptional()
+  @IsInt()
+  @Min(1)
+  installmentCount?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  startingInstallment?: number;
+
+  @IsOptional()
   @IsString()
   accountId?: string;
 
@@ -287,6 +307,11 @@ export class RegisterDebtPaymentBodyDto {
 
   @IsDateString()
   occurredAt: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  interestAmount?: number;
 }
 
 export class AdjustDebtBalanceBodyDto {
